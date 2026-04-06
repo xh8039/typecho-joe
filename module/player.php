@@ -1,4 +1,16 @@
 <?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
+
 require_once dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . 'config.inc.php';
 \Widget\Init::alloc();
 require_once dirname(__DIR__) . '/public/function.php';
@@ -11,18 +23,18 @@ $screenshot = (isset($_GET['screenshot']) && $_GET['screenshot']) ? 'true' : 'fa
 $url = addslashes(strip_tags($_GET['url']));
 $pic = (empty($_GET['pic']) || $_GET['pic'] == 'null') ? 'null' : '"' . addslashes(strip_tags($_GET['pic'])) . '"';
 if (strpos($url, 'magnet:') === 0) {
-	$MSE = joe_cdn('webtorrent/1.9.7/webtorrent.min.js');
+	$MSE = joe_cdn_url('webtorrent/1.9.7/webtorrent.min.js');
 	$video_type = 'webtorrent';
 } else {
 	$parse_url = parse_url($url);
 	$url_extension = pathinfo($parse_url['path'], PATHINFO_EXTENSION);
 	switch ($url_extension) {
 		case 'm3u8':
-			$MSE = joe_cdn('hls.js/1.5.13/hls.min.js');
+			$MSE = joe_cdn_url('hls.js/1.5.13/hls.min.js');
 			$video_type = 'hls';
 			break;
 		case 'mpd':
-			$MSE = joe_cdn('shaka-player/4.10.7/shaka-player.compiled.min.js');
+			$MSE = joe_cdn_url('shaka-player/4.10.7/shaka-player.compiled.min.js');
 			$video_type = 'shakaDash';
 			$customType = '{
         	shakaDash: function (video, player) {
@@ -32,7 +44,7 @@ if (strpos($url, 'magnet:') === 0) {
         	}';
 			break;
 		case 'flv':
-			$MSE = joe_cdn('flv.js/1.6.2/flv.min.js');
+			$MSE = joe_cdn_url('flv.js/1.6.2/flv.min.js');
 			$video_type = 'flv';
 			break;
 		default:
@@ -75,7 +87,7 @@ $MSE = empty($MSE) ? null : ('<script src="' . $MSE . '"></script>' . PHP_EOL);
 <body>
 	<div id="dplayer"></div>
 	<?= $MSE ?>
-	<script src="<?= joe_cdn('dplayer/1.27.0/DPlayer.min.js') ?>"></script>
+	<script src="<?= joe_cdn_url('dplayer/1.27.0/DPlayer.min.js') ?>"></script>
 	<script>
 		window.onload = () => {
 			// 检查是否在 iframe 中

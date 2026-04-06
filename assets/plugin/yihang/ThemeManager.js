@@ -17,7 +17,7 @@ class ThemeManager {
 
 	// 触发主题切换按钮的点击事件（所有切换逻辑由原有代码处理）
 	toggle() {
-		$('.toggle-theme').trigger('click');
+		document.querySelector('.toggle-theme')?.click()
 	}
 
 	// 销毁监听器（用于单页应用清理）

@@ -67,7 +67,7 @@ body.fullscreen {
 }
 
 .cm-container .cm-tools .cm-tools-item.active svg {
-	fill: rgba(255, 255, 255, .75)
+	opacity: 0.9;
 }
 
 .cm-container .cm-tools .cm-tools-item.active .cm-tools__dropdown {
@@ -77,12 +77,20 @@ body.fullscreen {
 }
 
 .cm-container .cm-tools .cm-tools-item:hover svg {
-	fill: rgba(255, 255, 255, .75)
+	opacity: 0.9;
 }
 
 .cm-container .cm-tools .cm-tools-item svg {
 	fill: #9da5b4;
 	transition: fill .25s
+}
+
+.cm-container .cm-tools .cm-tools-item svg.module {
+	fill: #748FFC;
+}
+
+.cm-container .cm-tools .cm-tools-item svg.tool {
+	fill: #b1b8c4;
 }
 
 .cm-container .cm-tools__dropdown {

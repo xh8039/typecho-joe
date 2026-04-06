@@ -1,15 +1,3 @@
-/*
- * @Author        : Qinver
- * @Url           : zibll.com
- * @Date          : 2020-09-29 13:18:40
- * @LastEditTime : 2026-01-31 16:42:49
- * @Email         : 770349780@qq.com
- * @Project       : Zibll子比主题
- * @Description   : 一款极其优雅的Wordpress主题
- * @Read me       : 感谢您使用子比主题，主题源码有详细的注释，支持二次开发。
- * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
- */
-
 //libs-插件
 //jQuery.cookie
 jQuery.cookie = function (e, o, t) {
@@ -1119,6 +1107,7 @@ function get_new_dplayer(_this, func) {
 		type: _this.attr('video-type') || 'auto',
 	};
 	_this.attr('data-loop') && (option.loop = true);
+	_this.attr('data-next') && (option.next = true);
 	_this.attr('data-autoplay') && (option.autoplay = true);
 	if (data_volume && data_volume < 1) {
 		option.volume = data_volume;
@@ -1153,6 +1142,36 @@ function get_new_dplayer(_this, func) {
 			newDPlayer.on('play', function () {
 				_win.dplayer.play = newDPlayer;
 			});
+
+			// --- 核心修改开始：智能联播逻辑 ---
+			newDPlayer.on('ended', function () {
+				// 1. 如果没有开启 next (自动下集)，则无论如何都不自动切换，保持原逻辑
+				// (如果 loop 开了，DPlayer 原生会处理单视频循环)
+				if (!option.next) return;
+
+				var $playerContainer = $(newDPlayer.container);
+				var $featured = $playerContainer.siblings('.dplayer-featured');
+
+				if (!$featured.length) return;
+
+				var $activeSwitch = $featured.find('.switch-video.active');
+				var $targetSwitch = $activeSwitch.next('.switch-video');
+
+				// 2. 如果没有下一集了 (当前是最后一集)
+				if (!$targetSwitch.length) {
+					// 只有开启了 loop，才回到第一集，实现列表循环
+					if (option.loop) {
+						$targetSwitch = $featured.find('.switch-video:first');
+					} else {
+						// 没开启 loop，列表播完就结束
+						return;
+					}
+				}
+
+				// 3. 执行切换
+				if ($targetSwitch.length) $targetSwitch.click();
+			});
+			// --- 核心修改结束 ---
 
 			_this.data('dplayer', newDPlayer);
 			_win.dplayer.obj[i] = newDPlayer;
@@ -2814,17 +2833,17 @@ _win.bd.on('click', '.toggle-theme', function (event) {
 			_enlighter.removeClass(highlight_white_zt).addClass(highlight_dark_zt);
 			_body.addClass('dark-theme'),
 				$.cookie('theme_mode', 'dark-theme', {
-                    path: '/',
-                });
+					path: '/',
+				});
 		} else {
 			$('meta[name="theme-color"]').attr('content', '#FDFCFE');
 			document.documentElement.classList.remove('dark');
 			_tinymce_body.removeClass('dark-theme');
 			_enlighter.removeClass(highlight_dark_zt).addClass(highlight_white_zt);
 			_body.removeClass('dark-theme'),
-				 $.cookie('theme_mode', 'white-theme', {
-                    path: '/',
-                });
+				$.cookie('theme_mode', 'white-theme', {
+					path: '/',
+				});
 		}
 		document.documentElement.style.colorScheme = isDark ? 'light' : 'dark';
 	}

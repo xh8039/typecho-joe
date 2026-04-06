@@ -3,7 +3,7 @@ require_once TYPECHO_ADMIN_ROOT . 'header.php';
 require_once TYPECHO_ADMIN_ROOT . 'menu.php';
 require_once __DIR__ . '/widget.php';
 $orders = Typecho\Widget::widget('JoeOrders\Widget');
-$orders_url = '../themes/' . THEME_NAME . '/admin/orders.php';
+$orders_url = '../themes/' . JOE_THEME_NAME . '/admin/orders.php';
 $panel_url = $options->adminUrl . 'extending.php?panel=' . urlencode($orders_url);
 ?>
 <style>
@@ -36,7 +36,7 @@ $panel_url = $options->adminUrl . 'extending.php?panel=' . urlencode($orders_url
 			<div class="col-mb-12 typecho-list">
 				<div class="typecho-list-operate clearfix">
 					<form method="get" action="<?php $options->adminUrl('extending.php'); ?>">
-						<input type="hidden" name="panel" value="<?= '../themes/' . THEME_NAME . '/admin/orders.php' ?>" />
+						<input type="hidden" name="panel" value="<?= '../themes/' . JOE_THEME_NAME . '/admin/orders.php' ?>" />
 						<div class="operate">
 							<label><i class="sr-only"><?php _e('全选'); ?></i><input type="checkbox"
 									class="typecho-table-select-all" /></label>
@@ -122,7 +122,7 @@ $panel_url = $options->adminUrl . 'extending.php?panel=' . urlencode($orders_url
 											<td><?php $orders->pay_price(); ?></td>
 											<td><?php $orders->admin_email(); ?></td>
 											<td><?php $orders->user_email(); ?></td>
-											<td><?php $orders->create_time(); ?></td>
+											<td><?= $orders->create_time ?? date('Y-m-d H:i:s', $orders->created); ?></td>
 										</tr>
 									<?php endwhile; ?>
 								<?php else : ?>

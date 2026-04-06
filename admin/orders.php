@@ -16,7 +16,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 	exit(1);
 }
 define('JOE_ROOT', dirname(__DIR__) . DIRECTORY_SEPARATOR);
-define('THEME_NAME', basename(JOE_ROOT));
+define('JOE_THEME_NAME', basename(JOE_ROOT));
 define('TYPECHO_ADMIN_ROOT', __TYPECHO_ROOT_DIR__ . __TYPECHO_ADMIN_DIR__);
 /* Composer 自动加载 */
 require_once JOE_ROOT . 'public/autoload.php';

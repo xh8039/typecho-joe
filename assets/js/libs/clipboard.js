@@ -1,15 +1,3 @@
-/*
- * @Author        : Qinver
- * @Url           : zibll.com
- * @Date          : 2020-10-28 13:16:44
- * @LastEditTime: 2021-12-22 22:58:32
- * @Email         : 770349780@qq.com
- * @Project       : Zibll子比主题
- * @Description   : 一款极其优雅的Wordpress主题
- * @Read me       : 感谢您使用子比主题，主题源码有详细的注释，支持二次开发。
- * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
- */
-
 function copyText(text, success, error, _this) {
     // 数字没有 .length 不能执行selectText 需要转化成字符串
     var textString = text.toString();

@@ -46,12 +46,12 @@ window.Joe.openLinkInNewTab = (url) => {
 }
 
 window.Joe.themeUpdate = (file) => {
+	alert('注意：更新后务必先重新保存主题设置，否则可能出现 Server 500');
 	var loading = layer.load(2, { shade: 0.3 });
 	$.ajax({
-		type: "get",
-		url: 'options-theme.php',
-		data: { action: 'update' },
-		dataType: "json",
+		type: 'get',
+		url: Joe.BASE_API + 'theme-update',
+		dataType: 'json',
 		success: (data) => {
 			layer.close(loading);
 			if (data.code == 200) {
@@ -180,6 +180,13 @@ document.addEventListener("DOMContentLoaded", function () {
 				</ol>
 				`;
 			});
+		});
+	}
+
+	{
+		$.getJSON(`${Joe.BASE_API}theme-error`, (data) => {
+			if (!data.message) return;
+			layer.alert(data.message);
 		});
 	}
 

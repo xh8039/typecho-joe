@@ -206,6 +206,12 @@ class JoeEditor extends JoeAction {
 						case 'publish':
 							super.handlePublish();
 							break;
+						case 'feature':
+							super.handleFeature(this.cm);
+							break;
+						case 'title-vertical':
+							super.handleTitleVertical(this.cm);
+							break;
 						case 'undo':
 							super.handleUndo(this.cm);
 							break;
@@ -313,20 +319,23 @@ class JoeEditor extends JoeAction {
 						case 'expression':
 							super.handleExpression(this.cm);
 							break;
-						case 'mtitle':
-							super.handleMtitle(this.cm);
+						case 'center-title':
+							super.handleCenterTitle(this.cm);
+							break;
+						case 'zibll-quote':
+							super.handleZibllQuote(this.cm);
 							break;
 						case 'html':
 							super.handleHtml(this.cm);
 							break;
-						case 'abtn':
-							super.handleAbtn(this.cm);
+						case 'button':
+							super.handleButton(this.cm);
 							break;
-						case 'anote':
-							super.handleAnote(this.cm);
+						case 'buttons':
+							super.handleButtons(this.cm);
 							break;
-						case 'dotted':
-							super.handleDotted(this.cm);
+						case 'color-dashed':
+							super.handleColorDashed(this.cm);
 							break;
 						case 'hide':
 							super.handleHide(this.cm);
@@ -355,14 +364,14 @@ class JoeEditor extends JoeAction {
 						case 'timeline':
 							super.handleTimeline(this.cm);
 							break;
-						case 'copy':
-							super.handleCopy(this.cm);
-							break;
-						case 'card-describe':
-							super.handleCardDescribe(this.cm);
-							break;
-						case 'lamp':
-							super.handleLamp(this.cm);
+						// case 'copy':
+						// 	super.handleCopy(this.cm);
+						// 	break;
+						// case 'card-describe':
+						// 	super.handleCardDescribe(this.cm);
+						// 	break;
+						case 'pulse-line':
+							super.handlePulseLine(this.cm);
 							break;
 						case 'collapse':
 							super.handleCollapse(this.cm);

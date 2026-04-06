@@ -11,7 +11,7 @@ function waiting_count()
 	)['count'];
 }
 $waiting_count = waiting_count();
-$friends_url = '../themes/' . THEME_NAME . '/admin/friends.php';
+$friends_url = '../themes/' . JOE_THEME_NAME . '/admin/friends.php';
 $panel_url = $options->adminUrl . 'extending.php?panel=' . urlencode($friends_url);
 ?>
 <style>
@@ -123,7 +123,7 @@ $panel_url = $options->adminUrl . 'extending.php?panel=' . urlencode($friends_ur
 				</form>
 				<div class="typecho-list-operate clearfix">
 					<form method="get" <?php $options->adminUrl('extending.php') ?>>
-						<input type="hidden" name="panel" value="<?= '../themes/' . THEME_NAME . '/admin/friends.php' ?>" />
+						<input type="hidden" name="panel" value="<?= '../themes/' . JOE_THEME_NAME . '/admin/friends.php' ?>" />
 						<div class="operate">
 							<label>
 								<i class="sr-only"><?php _e('全选'); ?></i><input type="checkbox" class="typecho-table-select-all" />

@@ -19,15 +19,12 @@ class EpayCore
 	public function __construct($config)
 	{
 		$config['apiurl'] = rtrim($config['apiurl'], '/') . '/';
-		$this->pid        = !empty($config['partner']) ? $config['partner'] : $config['pid'];
-		$this->key        = !empty($config['key']) ? $config['key'] : $config['token'];
+		$this->pid = $config['pid'];
+		$this->key = $config['key'];
 		$this->submit_url = $config['apiurl'] . 'submit.php';
-		$this->mapi_url   = $config['apiurl'] . 'mapi.php';
-		$this->api_url    = $config['apiurl'] . 'api.php';
-
-		if (!empty($config['mapi_url'])) {
-			$this->mapi_url = $config['mapi_url'];
-		}
+		$this->mapi_url = $config['apiurl'] . 'mapi.php';
+		$this->api_url = $config['apiurl'] . 'api.php';
+		if (!empty($config['mapi_url'])) $this->mapi_url = $config['mapi_url'];
 	}
 
 	// 发起支付（页面跳转）
@@ -48,25 +45,23 @@ class EpayCore
 	public function getPayLink($param_tmp)
 	{
 		$param = $this->buildRequestParam($param_tmp);
-		$url   = $this->submit_url . '?' . http_build_query($param);
+		$url = $this->submit_url . '?' . http_build_query($param);
 		return $url;
 	}
 
 	// 发起支付（API接口）
 	public function apiPay($param_tmp)
 	{
-		$param    = $this->buildRequestParam($param_tmp);
+		$param = $this->buildRequestParam($param_tmp);
 		$response = $this->getHttpResponse($this->mapi_url, http_build_query($param));
-		$arr      = json_decode($response, true);
+		$arr = json_decode($response, true);
 		return $arr;
 	}
 
 	// 异步回调验证
 	public function verifyNotify()
 	{
-		if (empty($_GET)) {
-			return false;
-		}
+		if (empty($_GET)) return false;
 
 		$sign = $this->getSign($_GET);
 
@@ -82,9 +77,7 @@ class EpayCore
 	// 同步回调验证
 	public function verifyReturn()
 	{
-		if (empty($_GET)) {
-			return false;
-		}
+		if (empty($_GET)) return false;
 
 		$sign = $this->getSign($_GET);
 
@@ -98,10 +91,10 @@ class EpayCore
 	}
 
 	// 查询订单支付状态
-	public function orderStatus($trade_no, $api_trade_no)
+	public function orderStatus($trade_no)
 	{
-		$result = $this->queryOrder($trade_no, $api_trade_no);
-		if (isset($result['status']) && $result['status'] == 1) {
+		$result = $this->queryOrder($trade_no);
+		if ($result['status'] == 1) {
 			return true;
 		} else {
 			return false;
@@ -109,28 +102,28 @@ class EpayCore
 	}
 
 	// 查询订单
-	public function queryOrder($out_trade_no, $api_trade_no)
+	public function queryOrder($trade_no)
 	{
-		$url      = $this->api_url . '?act=order&pid=' . $this->pid . '&key=' . $this->key . '&out_trade_no=' . $out_trade_no . '&trade_no=' . $api_trade_no;
+		$url = $this->api_url . '?act=order&pid=' . $this->pid . '&key=' . $this->key . '&trade_no=' . $trade_no;
 		$response = $this->getHttpResponse($url);
-		$arr      = json_decode($response, true);
+		$arr = json_decode($response, true);
 		return $arr;
 	}
 
 	// 订单退款
 	public function refund($trade_no, $money)
 	{
-		$url      = $this->api_url . '?act=refund';
-		$post     = 'pid=' . $this->pid . '&key=' . $this->key . '&trade_no=' . $trade_no . '&money=' . $money;
+		$url = $this->api_url . '?act=refund';
+		$post = 'pid=' . $this->pid . '&key=' . $this->key . '&trade_no=' . $trade_no . '&money=' . $money;
 		$response = $this->getHttpResponse($url, $post);
-		$arr      = json_decode($response, true);
+		$arr = json_decode($response, true);
 		return $arr;
 	}
 
 	private function buildRequestParam($param)
 	{
-		$mysign             = $this->getSign($param);
-		$param['sign']      = $mysign;
+		$mysign = $this->getSign($param);
+		$param['sign'] = $mysign;
 		$param['sign_type'] = $this->sign_type;
 		return $param;
 	}

@@ -91,7 +91,7 @@ class JoeAction {
 						const _this = this;
 						$('.cm-modal__wrapper-bodyer .lists-item').on('click', function () {
 							const text = $(this).attr('data-text');
-							_this._replaceSelection(cm, ` ${text} `);
+							_this._replaceSelection(cm, `${text}`);
 							$('.cm-modal').removeClass('active');
 							cm.focus();
 						});
@@ -334,9 +334,31 @@ class JoeAction {
 				</div>
 			`,
 			confirm: () => {
-				const title = $(".cm-modal input[name='title']").val().trim() || '链接标题';
+				const title = $(".cm-modal input[name='title']").val().trim();
 				const url = $(".cm-modal input[name='url']").val().trim() || 'http://';
-				this._replaceSelection(cm, `[${title}](${url})`);
+				const text = title ? `[${title}](${url})` : `<${url}>`;
+				this._replaceSelection(cm, text);
+				cm.focus();
+			}
+		});
+	}
+	handleZibllQuote(cm) {
+		this._openModal({
+			title: '引言',
+			innerHtml: `
+				<div class="fitem">
+					<label>引言颜色</label>
+					<input autocomplete="off" value="#555" name="color" type="color"/>
+				</div>
+				<div class="fitem">
+					<label>引言内容</label>
+					<input autocomplete="off" name="text" placeholder="请输入引言内容"/>
+				</div>
+			`,
+			confirm: () => {
+				const color = $(".cm-modal input[name='color']").val().trim();
+				const text = $(".cm-modal input[name='text']").val().trim();
+				this._replaceSelection(cm, `\n{quote color="${color}"}\n${text}\n{/quote}\n`);
 				cm.focus();
 			}
 		});
@@ -470,8 +492,8 @@ class JoeAction {
 		});
 	}
 	handleTask(cm, type) {
-		const str = type ? '{x}' : '{ }';
-		this._replaceSelection(cm, ` ${str} `);
+		const str = type ? '{todo status="1" /}' : '{todo status="0" /}';
+		this._replaceSelection(cm, str);
 		cm.focus();
 	}
 	handleNetease(cm, type) {
@@ -561,9 +583,81 @@ class JoeAction {
 			}
 		});
 	}
+	handleFeature(codeMirror) {
+		this._openModal({
+			title: '亮点',
+			innerHtml: `
+			<div class="fitem">
+				<label>亮点图标</label>
+				<input autocomplete="off" name="icon" placeholder="请输入fa图标，例：fa-download"/>
+			</div>
+			<div class="fitem">
+				<label>图标大全</label>
+				<a href="https://fontawesome.dashgame.com" target="_blank">fontawesome.dashgame.com</a>
+			</div>
+			<div class="fitem">
+				<label>图标颜色</label>
+				<input autocomplete="off" name="icon-color" type="color" value="#fffffe"/>
+			</div>
+			<div class="fitem">
+				<label>亮点标题</label>
+				<input autocomplete="off" name="title" type="text" placeholder="请输入亮点标题"/>
+			</div>
+			<div class="fitem" style="align-items: flex-start">
+				<label>亮点简介</label>
+				<textarea autocomplete="off" name="note" placeholder="请输入亮点简介"></textarea>
+			</div>
+			`,
+			confirm: () => {
+				const icon = $(".cm-modal input[name='icon']").val().trim();
+				let iconColor = $(".cm-modal input[name='icon-color']").val().trim();
+				iconColor = iconColor === '#fffffe' ? '' : iconColor;
+				const title = $(".cm-modal input[name='title']").val().trim();
+				const note = $(".cm-modal textarea[name='note']").val().trim();
+				const str = `\n{feature icon="${icon}" icon-color="${iconColor}" title="${title}" note="${note}" /}\n`;
+				this._replaceSelection(codeMirror, this._getLineCh(codeMirror) ? '\n' + str : str);
+				codeMirror.focus();
+			}
+		});
+	}
+	handleTitleVertical(codeMirror) {
+		this._openModal({
+			title: '标题',
+			innerHtml: `
+			<div class="fitem">
+				<label>标题级别</label>
+				<select name="level">
+					<option value="1">H1</option>
+					<option value="2" selected>H2</option>
+					<option value="3">H3</option>
+					<option value="4">H4</option>
+					<option value="5">H5</option>
+					<option value="6">H6</option>
+				</select>
+			</div>
+			<div class="fitem">
+				<label>标题内容</label>
+				<input autocomplete="off" name="content" placeholder="请输入标题内容"/>
+			</div>
+			<div class="fitem">
+				<label>标题颜色</label>
+				<input autocomplete="off" name="color" type="color" value="#fffffe"/>
+			</div>
+			`,
+			confirm: () => {
+				const level = $(".cm-modal select[name='level']").val().trim();
+				const content = $(".cm-modal input[name='content']").val().trim();
+				let color = $(".cm-modal input[name='color']").val().trim();
+				color = (color === '#fffffe' ? '' : color);
+				const str = `\n{title level="${level}" color="${color}" text="${content}" /}\n`;
+				this._replaceSelection(codeMirror, this._getLineCh(codeMirror) ? '\n' + str : str);
+				codeMirror.focus();
+			}
+		});
+	}
 	handleDplayer(cm) {
 		this._openModal({
-			title: 'M3U8/MP4视频',
+			title: 'M3U8/MP4/HLS/MPD/DASH/FLV 视频',
 			innerHtml: `
 <div class="fitem">
 	<label>视频地址</label>
@@ -574,8 +668,8 @@ class JoeAction {
 	<input autocomplete="off" name="pic" placeholder="请输入视频封面地址"/>
 </div>
 <div class="fitem">
-	<label>主题颜色</label>
-	<input autocomplete="off" name="theme" type="color" value="#409eff"/>
+	<label>默认音量</label>
+	<input autocomplete="off" type="number" name="volume" value="100" placeholder="1-100" min="1" max="100"/>
 </div>
 <div class="fitem">
 	<label>自动播放</label>
@@ -592,8 +686,8 @@ class JoeAction {
 	</select>
 </div>
 <div class="fitem">
-	<label>视频截图</label>
-	<select name="screenshot">
+	<label>视频控件</label>
+	<select name="controls">
 		<option value="1" selected>是</option>
 		<option value="0">否</option>
 	</select>
@@ -602,11 +696,11 @@ class JoeAction {
 			confirm: () => {
 				let url = $(".cm-modal input[name='src']").val().trim();
 				let pic = $(".cm-modal input[name='pic']").val().trim();
-				let theme = $(".cm-modal input[name='theme']").val().trim();
+				let volume = $(".cm-modal input[name='volume']").val().trim();
 				let autoplay = $(".cm-modal select[name='autoplay']").val().trim();
 				let loop = $(".cm-modal select[name='loop']").val().trim();
-				let screenshot = $(".cm-modal select[name='screenshot']").val().trim();
-				const str = `\n{dplayer-single src="${url}" pic="${pic}" theme="${theme}" autoplay="${autoplay}" loop="${loop}" screenshot="${screenshot}" /}\n`;
+				let controls = $(".cm-modal select[name='controls']").val().trim();
+				const str = `\n{video url="${url}" pic="${pic}" autoplay="${autoplay}" loop="${loop}" volume="${volume}" controls="${controls}" /}\n`;
 				if (this._getLineCh(cm)) this._replaceSelection(cm, '\n' + str);
 				else this._replaceSelection(cm, str);
 				cm.focus();
@@ -622,8 +716,8 @@ class JoeAction {
 	<input autocomplete="off" name="pic" placeholder="请输入视频封面地址"/>
 </div>
 <div class="fitem">
-	<label>主题颜色</label>
-	<input autocomplete="off" name="theme" type="color" value="#409eff"/>
+	<label>默认音量</label>
+	<input autocomplete="off" type="number" name="volume" value="100" placeholder="1-100" min="1" max="100"/>
 </div>
 <div class="fitem">
 	<label>自动播放</label>
@@ -632,12 +726,27 @@ class JoeAction {
 		<option value="0">否</option>
 	</select>
 </div>
-			`,
+<div class="fitem">
+	<label>自动下集</label>
+	<select name="next">
+		<option value="1" selected>是</option>
+		<option value="0">否</option>
+	</select>
+</div>
+<div class="fitem">
+	<label>循环播放</label>
+	<select name="loop">
+		<option value="1" selected>是</option>
+		<option value="0">否</option>
+	</select>
+</div>`,
 			confirm: () => {
 				const pic = $(".cm-modal input[name='pic']").val().trim();
-				const theme = $(".cm-modal input[name='theme']").val().trim();
+				const volume = $(".cm-modal input[name='volume']").val().trim();
 				const autoplay = $(".cm-modal select[name='autoplay']").val().trim();
-				const content = `\n{dplayer-list autoplay="${autoplay}" theme="${theme}" pic="${pic}"}\n{dplayer-list-item title="视频标题" desc="视频简介" src="视频地址" pic="视频封面" /}\n{dplayer-list-item title="视频标题" desc="视频简介" src="视频地址" pic="视频封面" /}\n{/dplayer-list}\n`;
+				const next = $(".cm-modal select[name='next']").val().trim();
+				const loop = $(".cm-modal select[name='loop']").val().trim();
+				const content = `\n{video-list pic="${pic}" autoplay="${autoplay}" next="${next}" loop="${loop}" volume="${volume}"}\n{video-list-item title="视频标题" desc="视频简介" url="视频地址" pic="视频封面" /}\n{video-list-item title="视频标题" desc="视频简介" url="视频地址" pic="视频封面" /}\n{/video-list}\n`;
 				if (this._getLineCh(CodeMirror)) this._replaceSelection(CodeMirror, '\n' + content);
 				else this._replaceSelection(CodeMirror, content);
 				CodeMirror.focus();
@@ -693,7 +802,7 @@ class JoeAction {
 			}
 		});
 	}
-	handleMtitle(cm) {
+	handleCenterTitle(cm) {
 		this._openModal({
 			title: '居中标题',
 			innerHtml: `
@@ -704,7 +813,7 @@ class JoeAction {
 			`,
 			confirm: () => {
 				const text = $(".cm-modal input[name='text']").val();
-				const str = `\n{mtitle title="${text}"/}\n`;
+				const str = `\n{center-title}${text}{/center-title}\n`;
 				if (this._getLineCh(cm)) this._replaceSelection(cm, '\n' + str);
 				else this._replaceSelection(cm, str);
 				cm.focus();
@@ -716,15 +825,48 @@ class JoeAction {
 		this._replaceSelection(cm, str);
 		cm.focus();
 	}
-	handleHide(cm) {
-		const selection = this._getSelection(cm);
-		const str = `{hide}${this._getLineCh(cm) ? '' : '\n'}${selection ? selection : '需要隐藏的内容'}${this._getLineCh(cm) ? '' : '\n'}{/hide}`;
-		this._replaceSelection(cm, str);
-		cm.focus();
-	}
-	handleAbtn(cm) {
+	handleHide(CodeMirror) {
+		const selection = this._getSelection(CodeMirror);
+		if (selection) {
+			let str;
+			if (selection.includes('\n') || selection.includes('\r')) {
+				str = `{hide display="block"}\n${selection}\n{/hide}`;
+			} else {
+				str = `{hide display="line"}${selection}{/hide}`;
+			}
+			this._replaceSelection(CodeMirror, str);
+			CodeMirror.focus();
+			return;
+		}
 		this._openModal({
-			title: '多彩按钮',
+			title: '按钮',
+			innerHtml: `
+				<div class="fitem">
+					<label>显示方式</label>
+					<select name="display">
+						<option value="block" selected>块</option>
+						<option value="line">行</option>
+					</select>
+				</div>
+				<div class="fitem" style="align-items: flex-start">
+					<label>隐藏内容</label>
+					<textarea rows="5" autocomplete="off" name="content" placeholder="请输入要隐藏的内容"></textarea>
+				</div>
+			`,
+			confirm: () => {
+				const display = $(".cm-modal select[name='display']").val().trim();
+				const content = $(".cm-modal textarea[name='content']").val().trim();
+				let str;
+				if (display == 'block') str = `\n{hide display="${display}"}\n${content}\n{/hide}\n`;
+				if (display == 'line') str = `{hide display="${display}"}${content}{/hide}`;
+				this._replaceSelection(CodeMirror, this._getLineCh(CodeMirror) ? '\n' + str : str);
+				CodeMirror.focus();
+			}
+		});
+	}
+	handleButton(cm) {
+		this._openModal({
+			title: '按钮',
 			innerHtml: `
 				<div class="fitem">
 					<label>按钮图标</label>
@@ -736,7 +878,33 @@ class JoeAction {
 				</div>
 				<div class="fitem">
 					<label>按钮颜色</label>
-					<input autocomplete="off" name="color" type="color" value="#409eff"/>
+					<select name="class-color">
+						<option value="b-theme" selected>主题色</option>
+						<option value="jb-red">渐变红</option>
+						<option value="jb-pink">渐变粉</option>
+						<option value="jb-yellow">渐变浅黄</option>
+						<option value="jb-yellow-2">渐变深黄</option>
+						<option value="jb-blue">渐变蓝</option>
+						<option value="jb-cyan">渐变青</option>
+						<option value="jb-green">渐变绿</option>
+						<option value="jb-purple">渐变紫</option>
+						<option value="jb-vip1">渐变黄会员</option>
+						<option value="jb-vip2">渐变黑会员</option>
+						<option value="b-gray">灰色</option>
+						<option value="b-red">红色</option>
+						<option value="b-yellow">黄色</option>
+						<option value="b-cyan">青色</option>
+						<option value="b-blue">天蓝色</option>
+						<option value="b-blue-2">海蓝色</option>
+						<option value="b-green">绿色</option>
+						<option value="b-purple">紫色</option>
+						<option value="b-black">黑色</option>
+						<option value="custom">自定义</option>
+					</select>
+				</div>
+				<div class="fitem input-style-color" style="display:none">
+					<label>自定义按钮颜色</label>
+					<input autocomplete="off" name="style-color" type="color" value="#ffffff"/>
 				</div>
 				<div class="fitem">
 					<label>跳转链接</label>
@@ -745,87 +913,71 @@ class JoeAction {
 				<div class="fitem">
 					<label>打开方式</label>
 					<select name="target">
-						<option value="_self" selected>_self（默认，在当前页面打开链接）</option>
-						<option value="_blank">_blank（在新窗口/标签页打开链接）</option>
-						<option value="_parent">_parent（在父框架打开链接）</option>
-						<option value="_top">_top（在整个窗口打开链接）</option>
+						<option value="_self" selected>self（在当前页面打开链接）</option>
+						<option value="_blank">blank（在新窗口/标签页打开链接）</option>
+						<option value="_parent">parent（在父框架打开链接）</option>
+						<option value="_top">top（在整个窗口打开链接）</option>
 					</select>
 				</div>
 				<div class="fitem">
-					<label>按钮圆角</label>
-					<input autocomplete="off" name="radius" placeholder="请输入按钮圆角，例：17.5px" value="3.5px"/>
+					<label>圆角按钮</label>
+					<select name="radius">
+						<option value="0" selected>关闭</option>
+						<option value="1">开启</option>
+					</select>
 				</div>
 				<div class="fitem">
 					<label>按钮内容</label>
 					<input autocomplete="off" name="content" placeholder="请输入按钮内容"/>
 				</div>
 			`,
+			handler: () => {
+				const selectElement = document.querySelector('.cm-modal select[name="class-color"]');
+				selectElement.addEventListener('change', function () {
+					document.querySelector('.input-style-color').style.display = this.value === 'custom' ? 'flex' : 'none';
+				});
+			},
 			confirm: () => {
-				const icon = $(".cm-modal input[name='icon']").val();
-				const color = $(".cm-modal input[name='color']").val();
-				const href = $(".cm-modal input[name='href']").val();
-				const target = $(".cm-modal select[name='target']").val();
-				const radius = $(".cm-modal input[name='radius']").val();
-				const content = $(".cm-modal input[name='content']").val();
-				const str = `{abtn icon="${icon}" color="${color}" href="${href}" target="${target}" radius="${radius}" content="${content}"/}`;
+				const icon = $(".cm-modal input[name='icon']").val().trim();
+				const classColor = $(".cm-modal select[name='class-color']").val().trim();
+				const styleColor = $(".cm-modal input[name='style-color']").val().trim();
+				const color = classColor === 'custom' ? styleColor : classColor;
+				const href = $(".cm-modal input[name='href']").val().trim();
+				const target = $(".cm-modal select[name='target']").val().trim();
+				const radius = $(".cm-modal select[name='radius']").val().trim();
+				const content = $(".cm-modal input[name='content']").val().trim();
+				const str = `{button icon="${icon}" color="${color}" href="${href}" target="${target}" radius="${radius}"}${content}{/button}\n`;
 				this._replaceSelection(cm, str);
 				cm.focus();
 			}
 		});
 	}
-	handleAnote(cm) {
+	handleButtons(cm) {
 		this._openModal({
-			title: '便条按钮',
+			title: '按钮组',
 			innerHtml: `
 				<div class="fitem">
-					<label>按钮图标</label>
-					<input autocomplete="off" name="icon" placeholder="请输入fa图标，例：fa-download"/>
-				</div>
-				<div class="fitem">
-					<label>图标大全</label>
-					<a href="https://fontawesome.dashgame.com" target="_blank">fontawesome.dashgame.com</a>
-				</div>
-				<div class="fitem">
-					<label>跳转链接</label>
-					<input autocomplete="off" name="href" placeholder="请输入跳转链接"/>
-				</div>
-				<div class="fitem">
-					<label>打开方式</label>
-					<select name="target">
-						<option value="_self" selected>_self（默认，在当前页面打开链接）</option>
-						<option value="_blank">_blank（在新窗口/标签页打开链接）</option>
-						<option value="_parent">_parent（在父框架打开链接）</option>
-						<option value="_top">_top（在整个窗口打开链接）</option>
+					<label>圆角按钮</label>
+					<select name="radius">
+						<option value="0" selected>关闭</option>
+						<option value="1">开启</option>
 					</select>
 				</div>
 				<div class="fitem">
-					<label>按钮类型</label>
-					<select name="type">
-						<option value="secondary" selected>secondary（次要的）</option>
-						<option value="success">success（成功）</option>
-						<option value="warning">warning（警告）</option>
-						<option value="error">error（错误）</option>
-						<option value="info">info（信息）</option>
-					</select>
-				</div>
-				<div class="fitem">
-					<label>按钮内容</label>
-					<input autocomplete="off" name="content" placeholder="请输入按钮内容"/>
+					<label>按钮数量</label>
+					<input autocomplete="off" type="number" name="count" placeholder="请输入按钮数量" min="1"/>
 				</div>
 			`,
 			confirm: () => {
-				const icon = $(".cm-modal input[name='icon']").val();
-				const href = $(".cm-modal input[name='href']").val();
-				const target = $(".cm-modal select[name='target']").val();
-				const type = $(".cm-modal select[name='type']").val();
-				const content = $(".cm-modal input[name='content']").val();
-				const str = `{anote icon="${icon}" href="${href}" target="${target}" type="${type}" content="${content}"/}`;
+				const radius = $(".cm-modal select[name='radius']").val();
+				const count = $(".cm-modal input[name='count']").val();
+				const str = `\n{buttons radius="${radius}" count="${count}"}\n{/buttons}\n`;
 				this._replaceSelection(cm, str);
 				cm.focus();
 			}
 		});
 	}
-	handleDotted(cm) {
+	handleColorDashed(cm) {
 		this._openModal({
 			title: '彩色虚线',
 			innerHtml: `
@@ -841,7 +993,7 @@ class JoeAction {
 			confirm: () => {
 				const startColor = $(".cm-modal input[name='startColor']").val();
 				const endColor = $(".cm-modal input[name='endColor']").val();
-				const str = `\n{dotted startColor="${startColor}" endColor="${endColor}"/}\n`;
+				const str = `\n{color-dashed start="${startColor}" end="${endColor}"/}\n`;
 				if (this._getLineCh(cm)) this._replaceSelection(cm, '\n' + str);
 				else this._replaceSelection(cm, str);
 				cm.focus();
@@ -858,7 +1010,7 @@ class JoeAction {
 				</div>
 				<div class="fitem">
 					<label>卡片宽度</label>
-					<input autocomplete="off" name="width" placeholder="请输入卡片宽度，例如：100%"/>
+					<input autocomplete="off" name="width" value="100%" placeholder="请输入卡片宽度，例如：100%"/>
 				</div>
 			`,
 			confirm: () => {
@@ -892,7 +1044,7 @@ class JoeAction {
 			confirm: () => {
 				const type = $(".cm-modal select[name='type']").val();
 				const content = $(".cm-modal textarea[name='content']").val();
-				const str = `\n{message type="${type}" content="${content}"/}\n\n`;
+				const str = `\n{message type="${type}"}${content}{/message}\n`;
 				if (this._getLineCh(cm)) this._replaceSelection(cm, '\n' + str);
 				else this._replaceSelection(cm, str);
 				cm.focus();
@@ -1030,12 +1182,12 @@ class JoeAction {
 		});
 	}
 	handleTabs(cm) {
-		const str = `${this._getLineCh(cm) ? '\n\n' : '\n'}{tabs}\n{tabs-pane label="标签一"}\n 标签一内容\n{/tabs-pane}\n{tabs-pane label="标签二"}\n 标签二内容\n{/tabs-pane}\n{/tabs}\n\n`;
+		const str = `${this._getLineCh(cm) ? '\n\n' : '\n'}{tabs}\n{tabs-pane label="标签一"}\n 标签一内容\n{/tabs-pane}\n{tabs-pane label="标签二"}\n 标签二内容\n{/tabs-pane}\n{/tabs}\n`;
 		this._replaceSelection(cm, str);
 		cm.focus();
 	}
 	handleCardList(cm) {
-		const str = `${this._getLineCh(cm) ? '\n\n' : '\n'}{card-list}\n{card-list-item}\n列表一内容\n{/card-list-item}\n{card-list-item}\n列表二内容\n{/card-list-item}\n{/card-list}\n\n`;
+		const str = `${this._getLineCh(cm) ? '\n\n' : '\n'}{card-list}\n{card-list-item}\n列表一内容\n{/card-list-item}\n{card-list-item}\n列表二内容\n{/card-list-item}\n{/card-list}\n`;
 		this._replaceSelection(cm, str);
 		cm.focus();
 	}
@@ -1049,63 +1201,130 @@ class JoeAction {
 		this._replaceSelection(cm, str);
 		cm.focus();
 	}
-	handleCopy(cm) {
-		this._openModal({
-			title: '复制文本',
-			innerHtml: `
-				<div class="fitem">
-					<label>显示文案</label>
-					<input autocomplete="off" name="showText" placeholder="请输入显示文案"/>
-				</div>
-				<div class="fitem" style="align-items: flex-start">
-					<label>复制内容</label>
-					<textarea autocomplete="off" name="copyText" placeholder="请输入需要复制的内容"></textarea>
-				</div>
-			`,
-			confirm: () => {
-				const showText = $(".cm-modal input[name='showText']").val();
-				const copyText = $(".cm-modal textarea[name='copyText']").val();
-				const str = `\n{copy showText="${showText}" copyText="${copyText}"/}\n\n`;
-				if (this._getLineCh(cm)) this._replaceSelection(cm, '\n' + str);
-				else this._replaceSelection(cm, str);
-				cm.focus();
-			}
-		});
-	}
-	handleLamp(cm) {
-		const str = `${this._getLineCh(cm) ? '\n\n' : '\n'}{lamp/}\n\n`;
+	// handleCopy(cm) {
+	// 	this._openModal({
+	// 		title: '复制文本',
+	// 		innerHtml: `
+	// 			<div class="fitem">
+	// 				<label>显示文案</label>
+	// 				<input autocomplete="off" name="showText" placeholder="请输入显示文案"/>
+	// 			</div>
+	// 			<div class="fitem" style="align-items: flex-start">
+	// 				<label>复制内容</label>
+	// 				<textarea autocomplete="off" name="copyText" placeholder="请输入需要复制的内容"></textarea>
+	// 			</div>
+	// 		`,
+	// 		confirm: () => {
+	// 			const showText = $(".cm-modal input[name='showText']").val();
+	// 			const copyText = $(".cm-modal textarea[name='copyText']").val();
+	// 			const str = `\n{copy showText="${showText}" copyText="${copyText}"/}\n\n`;
+	// 			if (this._getLineCh(cm)) this._replaceSelection(cm, '\n' + str);
+	// 			else this._replaceSelection(cm, str);
+	// 			cm.focus();
+	// 		}
+	// 	});
+	// }
+	handlePulseLine(cm) {
+		const str = `${this._getLineCh(cm) ? '\n\n' : '\n'}{pulse-line/}\n\n`;
 		this._replaceSelection(cm, str);
 		cm.focus();
 	}
-	handleCollapse(cm) {
-		const str = `${this._getLineCh(cm) ? '\n\n' : '\n'}{collapse}\n{collapse-item label="折叠标题一" open}\n折叠内容一\n{/collapse-item}\n{collapse-item label="折叠标题二"}\n折叠内容二\n{/collapse-item}\n{/collapse}\n\n`;
-		this._replaceSelection(cm, str);
-		cm.focus();
-	}
-	handleAlert(cm) {
+	handleCollapse(CodeMirror) {
 		this._openModal({
-			title: '警告提示',
+			title: '折叠框',
 			innerHtml: `
 				<div class="fitem">
-					<label>提示类型</label>
-					<select name="type">
-						<option value="info" selected>info（信息）</option>
-						<option value="success">success（成功）</option>
-						<option value="warning">warning（警告）</option>
-						<option value="error">error（错误）</option>
+					<label>默认展开</label>
+					<select name="open">
+						<option value="0" selected>展开</option>
+						<option value="1">不展开</option>
 					</select>
 				</div>
+				<div class="fitem">
+					<label>折叠标题</label>
+					<input autocomplete="off" name="label" type="text"/>
+				</div>
+				<div class="fitem" style="align-items: flex-start">
+					<label>折叠内容</label>
+					<textarea autocomplete="off" name="content" placeholder="请输入折叠内容"></textarea>
+				</div>
 			`,
 			confirm: () => {
-				const type = $(".cm-modal select[name='type']").val();
-				const str = `\n{alert type="${type}"}\n警告提示\n{/alert}\n`;
-				if (this._getLineCh(cm)) this._replaceSelection(cm, '\n' + str);
-				else this._replaceSelection(cm, str);
-				cm.focus();
+				const open = $(".cm-modal select[name='open']").val().trim();
+				const label = $(".cm-modal input[name='label']").val().trim();
+				const content = $(".cm-modal textarea[name='content']").val();
+				const str = `\n{collapse label="${label}" open="${open}"}\n${content}\n{/collapse}\n`;
+				this._replaceSelection(CodeMirror, this._getLineCh(CodeMirror) ? '\n' + str : str);
+				CodeMirror.focus();
 			}
 		});
 	}
-	handleIframe(cm) {
+	handleAlert(CodeMirror) {
+		this._openModal({
+			title: '提醒框',
+			innerHtml: `
+				<div class="fitem">
+					<label>背景颜色</label>
+					<select name="class-background">
+						<option value="b-theme" selected>主题色</option>
+						<option value="jb-red">渐变红</option>
+						<option value="jb-pink">渐变粉</option>
+						<option value="jb-yellow">渐变浅黄</option>
+						<option value="jb-yellow-2">渐变深黄</option>
+						<option value="jb-blue">渐变蓝</option>
+						<option value="jb-cyan">渐变青</option>
+						<option value="jb-green">渐变绿</option>
+						<option value="jb-purple">渐变紫</option>
+						<option value="jb-vip1">渐变黄会员</option>
+						<option value="jb-vip2">渐变黑会员</option>
+						<option value="b-gray">灰色</option>
+						<option value="b-red">红色</option>
+						<option value="b-yellow">黄色</option>
+						<option value="b-cyan">青色</option>
+						<option value="b-blue">天蓝色</option>
+						<option value="b-blue-2">海蓝色</option>
+						<option value="b-green">绿色</option>
+						<option value="b-purple">紫色</option>
+						<option value="b-black">黑色</option>
+						<option value="custom">自定义</option>
+					</select>
+				</div>
+				<div class="fitem input-style-background" style="display:none">
+					<label>自定义背景颜色</label>
+					<input autocomplete="off" name="style-background" type="color" value="#ffffff"/>
+				</div>
+				<div class="fitem">
+					<label>关闭按钮</label>
+					<select name="close">
+						<option value="0" selected>否</option>
+						<option value="1">是</option>
+					</select>
+				</div>
+				<div class="fitem" style="align-items: flex-start">
+					<label>提醒内容</label>
+					<textarea autocomplete="off" name="content" placeholder="请输入消息内容"></textarea>
+				</div>
+			`,
+			handler: () => {
+				const selectElement = document.querySelector('.cm-modal select[name="class-background"]');
+				selectElement.addEventListener('change', function () {
+					document.querySelector('.input-style-background').style.display = this.value === 'custom' ? 'flex' : 'none';
+				});
+				// 关闭弹窗自动删除元素 不用删除监听
+			},
+			confirm: () => {
+				const classBackground = $(".cm-modal select[name='class-background']").val().trim();
+				const styleBackground = $(".cm-modal input[name='style-background']").val().trim();
+				const background = classBackground === 'custom' ? styleBackground : classBackground;
+				const close = $(".cm-modal select[name='close']").val() === '1' ? '1' : '0';
+				const content = $(".cm-modal textarea[name='content']").val();
+				const str = `\n{alert color="${background}" close="${close}"}${content}{/alert}\n`;
+				this._replaceSelection(CodeMirror, this._getLineCh(CodeMirror) ? '\n' + str : str);
+				CodeMirror.focus();
+			}
+		});
+	}
+	handleIframe(CodeMirror) {
 		this._openModal({
 			title: '页面内嵌（可嵌入禁止跨域的MP4视频）',
 			innerHtml: `
@@ -1121,13 +1340,13 @@ class JoeAction {
 			confirm: () => {
 				const height = $(".cm-modal input[name='height']").val().trim();
 				const url = $(".cm-modal input[name='url']").val().trim();
-				const str = `\n{iframe src="${url}" height="${height}"/}\n`;
-				this._replaceSelection(cm, (this._getLineCh(cm) ? '\n' : '') + str);
-				cm.focus();
+				const str = `\n{iframe src="${url}" height="${height}" /}\n`;
+				this._replaceSelection(CodeMirror, (this._getLineCh(CodeMirror) ? '\n' : '') + str);
+				CodeMirror.focus();
 			}
 		});
 	}
-	handleCloud(cm) {
+	handleCloud(codeMirror) {
 		this._openModal({
 			title: '云盘下载',
 			innerHtml: `
@@ -1152,7 +1371,7 @@ class JoeAction {
 				</div>
 				<div class="fitem">
 					<label>下载地址</label>
-					<input autocomplete="off" name="url" placeholder="请输入网盘地址"/>
+					<input autocomplete="off" name="url" placeholder="请输入云盘地址"/>
 				</div>
 				<div class="fitem">
 					<label>提取密码</label>
@@ -1165,9 +1384,9 @@ class JoeAction {
 				const url = $(".cm-modal input[name='url']").val().trim();
 				const password = $(".cm-modal input[name='password']").val().trim();
 				const str = `{cloud title="${title}" type="${type}" url="${url}" password="${password}"/}`;
-				if (this._getLineCh(cm)) this._replaceSelection(cm, '\n' + str);
-				else this._replaceSelection(cm, str);
-				cm.focus();
+				if (this._getLineCh(codeMirror)) this._replaceSelection(codeMirror, '\n' + str);
+				else this._replaceSelection(codeMirror, str);
+				codeMirror.focus();
 			}
 		});
 	}

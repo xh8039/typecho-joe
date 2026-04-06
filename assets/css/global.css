@@ -1,0 +1,17 @@
+::-webkit-scrollbar {
+	width: 6px;
+	height: 6px
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: var(--main-radius);
+	background: var(--muted-4-color)
+}
+
+::-webkit-scrollbar-track {
+	background: var(--main-bg-color)
+}
+
+.dplayer,.dplayer-video-wrap .dplayer-video {
+	border-radius: var(--main-radius);
+}

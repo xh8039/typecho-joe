@@ -1,4 +1,15 @@
 <?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
 	http_response_code(404);
@@ -26,14 +37,13 @@ $joe_index_notice_theme = new \Typecho\Widget\Helper\Form\Element\Select(
 $joe_index_notice_theme->setAttribute('class', 'joe_content joe_index');
 $form->addInput($joe_index_notice_theme->multiMode());
 
-$JIndex_Icon_Card_Value = "源码资源--汇集优质源码 助你学习成长！[icon-wangzhanyuanma](c-blue) || /category/code/\r\n技术教程--高端技术教程 助你精进技能！[icon-vip_2](c-purple) || /category/tech/\r\n程序软件--丰富软件资源 满足你的需求！[icon-wallet-color](c-yellow) || /category/program/\r\n文创娱乐--创意无限 娱乐无界 尽享乐趣！[icon-poster-color](c-yellow) || /category/infotainment/";
+$JIndex_Icon_Card_Value = "源码资源--汇集优质源码 助你学习成长！[icon-wangzhanyuanma](c-blue) || /category/code/\n技术教程--高端技术教程 助你精进技能！[icon-vip_2](c-purple) || /category/tech/\n程序软件--丰富软件资源 满足你的需求！[icon-wallet-color](c-yellow) || /category/program/\n文创娱乐--创意无限 娱乐无界 尽享乐趣！[icon-poster-color](c-yellow) || /category/infotainment/";
 $JIndex_Icon_Card = new \Typecho\Widget\Helper\Form\Element\Textarea(
 	'JIndex_Icon_Card',
 	NULL,
-	$JIndex_Icon_Card_Value,
+	NULL,
 	'首页图标卡片模块',
-	'介绍：用于显示首页轮播图下方的图标卡片，请务必填写正确的格式丨<a target="_blank" href="http://blog.yihang.info/archives/295.html">查看官网教程</a><br>
-	示例：<br>' . str_replace("\r\n", '<br>', $JIndex_Icon_Card_Value)
+	'介绍：用于显示首页轮播图下方的图标卡片，请务必填写正确的格式丨<a target="_blank" href="http://blog.yihang.info/archives/295.html">查看官网教程</a><br>示例：<br>' . str_replace("\n", '<br>', $JIndex_Icon_Card_Value)
 );
 $JIndex_Icon_Card->setAttribute('class', 'joe_content joe_index');
 $JIndex_Icon_Card->setInputsAttribute('rows', '4');
@@ -124,7 +134,7 @@ $JIndex_Recommend = new \Typecho\Widget\Helper\Form\Element\Text(
 	'JIndex_Recommend',
 	NULL,
 	NULL,
-	'首页推荐文章（非必填）',
+	'首页推荐文章 - 电脑端',
 	'介绍：用于显示推荐文章，请务必填写正确的格式 <br/>
 		 格式：文章的id || 文章的id （中间使用两个竖杠分隔）<br />
 		 例如：1 || 2'
@@ -136,7 +146,7 @@ $JIndex_Mobile_Recommend = new \Typecho\Widget\Helper\Form\Element\Text(
 	'JIndex_Mobile_Recommend',
 	NULL,
 	NULL,
-	'首页移动端推荐文章（非必填）',
+	'首页推荐文章 - 移动端',
 	'介绍：用于显示移动端推荐文章，请务必填写正确的格式 <br/>
 	格式：文章的id || 文章的id （中间使用两个竖杠分隔）<br />
 	例如：1 || 2'
@@ -222,8 +232,9 @@ $JIndex_Ad = new \Typecho\Widget\Helper\Form\Element\Textarea(
 	NULL,
 	'首页广告',
 	'介绍：请务必填写正确的格式 <br />
-		格式：广告图片 || 广告链接（可为空） || 广告文字（可为空）（中间使用两个竖杠分隔，一行一个）<br />
-		例如：https://puui.qpic.cn/media_img/lena/PICykqaoi_580_1680/0 || https://baidu.com || 广告'
+	格式：广告图片 || 广告链接（可为空） || 广告文字（可为空）（中间使用两个竖杠分隔，一行一个）<br />
+	例如：https://puui.qpic.cn/media_img/lena/PICykqaoi_580_1680/0 || https://baidu.com || 广告<br>
+	免费生成广告图片：http://web.yihang.info/tool/ad-image/'
 );
 $JIndex_Ad->setAttribute('class', 'joe_content joe_index');
 $form->addInput($JIndex_Ad);

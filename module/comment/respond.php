@@ -1,6 +1,20 @@
+<?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
+
+?>
 <div class="flex ac jsb virtual-input " fixed-input="#respond">
 	<div class="flex flex1 ac">
-		<img alt="<?= $this->user->screenName ?>的头像-<?php $this->options->title(); ?>" src="<?= joe_avatar_lazyload_url(); ?>" data-src="<?= joe_get_avatar_by_mail($this->user->mail) ?>" class="lazyload avatar avatar-id-<?= $this->user->uid ?>">
+		<img alt="<?= $this->user->screenName ?>的头像-<?php $this->options->title(); ?>" src="<?= joe_avatar_lazyload_url(); ?>" data-src="<?= joe_avatar_url_by_mail($this->user->mail) ?>" class="lazyload avatar avatar-id-<?= $this->user->uid ?>">
 		<div class="text-ellipsis simulation mr10">欢迎您留下宝贵的见解！</div>
 	</div>
 	<span class="but c-blue">提交</span>
@@ -10,7 +24,7 @@
 	<form id="commentform" class="<?= $this->respondId ?>">
 		<div class="flex ac">
 			<div class="comt-title text-center flex0 mr10">
-				<div class="comt-avatar mb10"><img alt="<?= $this->user->screenName ?>的头像-<?php $this->options->title(); ?>" src="<?= joe_avatar_lazyload_url(); ?>" data-src="<?= joe_get_avatar_by_mail($this->user->mail) ?>" class="lazyload avatar avatar-id-<?= $this->user->uid ?>"></div>
+				<div class="comt-avatar mb10"><img alt="<?= $this->user->screenName ?>的头像-<?php $this->options->title(); ?>" src="<?= joe_avatar_lazyload_url(); ?>" data-src="<?= joe_avatar_url_by_mail($this->user->mail) ?>" class="lazyload avatar avatar-id-<?= $this->user->uid ?>"></div>
 				<p class="text-ellipsis muted-2-color"><?= $this->user->screenName ?></p>
 			</div>
 			<div class="comt-box grow1">

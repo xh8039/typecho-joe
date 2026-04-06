@@ -49,15 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		setInterval(online, (Joe.options.JOnLineCountThreshold || 30) * 1000);
 	})();
 
-	/* 座右铭 */
-	// if (_win.options.JMotto && document.querySelector('.joe_motto')) {
-	// 	if (_win.options.JMotto.startsWith("https://") || _win.options.JMotto.startsWith("http://") || _win.options.JMotto.startsWith("//")) {
-	// 		$.get(_win.options.JMotto, text => $(".joe_motto").html(text), "text");
-	// 	} else {
-	// 		$(".joe_motto").html(_win.options.JMotto);
-	// 	}
-	// }
-
 	if (Joe.options.JDocumentTitle) {
 		const TITLE = document.title;
 		document.addEventListener("visibilitychange", () => {

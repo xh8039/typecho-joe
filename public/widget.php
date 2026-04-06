@@ -1,4 +1,15 @@
 <?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
 
 use think\facade\Db;
 
@@ -13,11 +24,11 @@ class Widget_Contents_Hot extends Widget\Base\Contents
 	{
 		// 排除推荐文章
 		$recommend_text = joe_is_mobile() ? Helper::options()->JIndex_Mobile_Recommend : Helper::options()->JIndex_Recommend;
-		$recommend = joe_optionMulti($recommend_text, '||', null);
+		$recommend = joe_option_multi($recommend_text, ['line' => '||', 'separator' => false]);
 		// 排除置顶文章
-		$JIndexSticky = joe_optionMulti(Helper::options()->JIndexSticky, '||', null);
+		$JIndexSticky = joe_option_multi(Helper::options()->JIndexSticky, ['line' => '||', 'separator' => false]);
 		// 排除要隐藏的热门文章
-		$IndexHotHidePost = joe_optionMulti(Helper::options()->IndexHotHidePost, '||', null);
+		$IndexHotHidePost = joe_option_multi(Helper::options()->IndexHotHidePost, ['line' => '||', 'separator' => false]);
 		// 合并排除文章
 		$hide_contents_cid_list = array_unique(array_merge($recommend, $JIndexSticky, $IndexHotHidePost));
 		// 默认文章一页展示多少个
@@ -119,6 +130,45 @@ class Widget_Contents_Post extends Widget_Abstract_Contents
 	}
 }
 
+class Widget_Contents_Article extends Widget_Abstract_Contents
+{
+	public function execute()
+	{
+		$path_info = Typecho\Request::getInstance()->getPathInfo();
+		$path_info_explode = explode('/', $path_info);
+		$this->currentPage = intval($path_info_explode[2] ?? 1);
+
+		$stickyIds = empty($this->options->JIndexSticky) ? [] : explode("||", $this->options->JIndexSticky);
+
+		$select = $this->select();
+		$select->cleanAttribute('fields');
+		$select->from('table.contents')
+			->where('table.contents.type = ?', 'post')
+			->where('table.contents.status = ?', 'publish')
+			->where('table.contents.cid NOT IN(?)', $stickyIds)
+			->page($this->currentPage, $this->options->pageSize);
+		if ($this->parameter->mid) {
+			$categorySelect = $this->db->select()->from('table.metas')->where('mid = ?', $this->parameter->mid)->limit(1);
+			$category = MetasFrom::allocWithAlias('metas:' . $this->parameter->mid, ['query' => $categorySelect]);
+			$children = $category->getAllChildIds($category->mid);
+			$children[] = $category->mid;
+			$select->join('table.relationships', 'table.contents.cid = table.relationships.cid')
+				->where('table.relationships.mid IN ?', $children)
+				->where('table.contents.type = ?', 'post')
+				->group('table.contents.cid');
+		}
+		if ($orderby = $this->request->get('orderby', Typecho\Cookie::get('_index_article_order', 'created'))) {
+			if ($orderby == 'created') $select->order('table.contents.created', Typecho\Db::SORT_DESC);
+			if ($orderby == 'modified') $select->order('table.contents.modified', Typecho\Db::SORT_DESC);
+			if ($orderby == 'views') $select->order('table.contents.views', Typecho\Db::SORT_DESC);
+			if ($orderby == 'like') $select->order('table.contents.agree', Typecho\Db::SORT_DESC);
+			if ($orderby == 'comment_count') $select->order('table.contents.commentsNum', Typecho\Db::SORT_DESC);
+			Typecho\Cookie::set('_index_article_order', $orderby);
+		}
+		$this->db->fetchAll($select, [$this, 'push']);
+	}
+}
+
 class Widget_Contents_Post_Author extends Widget_Abstract_Contents
 {
 	public function execute()
@@ -133,5 +183,28 @@ class Widget_Contents_Post_Author extends Widget_Abstract_Contents
 			->where('table.contents.status = ?', 'publish')
 			->order('table.contents.created', Typecho\Db::SORT_DESC)
 			->limit($this->parameter->limit), [$this, 'push']);
+	}
+}
+
+class Widget_Comments_Author extends Widget\Base\Comments
+{
+	public function execute()
+	{
+		// 默认文章一页展示多少个
+		$this->parameter->setDefault(['pageSize' => $this->options->commentsPageSize]);
+		$this->currentPage = $this->request->filter('int')->get('page', 1);
+		$select = $this->select();
+		$this->db->fetchAll(
+			$select
+				->from('table.comments')
+				->where('table.comments.authorId = ?', $this->parameter->uid)
+				->where('table.comments.status = ?', 'approved')
+				->where('table.comments.type = ?', 'comment')
+				->order('table.comments.created', Typecho\Db::SORT_DESC)
+				->page($this->currentPage, $this->parameter->pageSize)
+			// ->limit($this->parameter->pageSize)
+			,
+			[$this, 'push']
+		);
 	}
 }

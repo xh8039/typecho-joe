@@ -1,17 +1,20 @@
 <?php
-
 /**
- * 环境要求：<br>PHP 8+<br>Typecho 1.3<br>主题问题可 <a href="https://wpa.qq.com/msgrd?v=3&uin=2136118039&site=qq&menu=yes" target="_blank">联系易航</a> 解决<br>易航QQ：2136118039<br><font color="green">主题官方通知群：<a target="_blank" href="https://qm.qq.com/q/CtGxRbvHdm">782778569</a></font>
+ * Joe 主题专为商城、论坛、圈子博客、自媒体、资讯类的网站设计开发，采用简约优雅的设计风格让网站更具美感，创新的前端模块化功能配置和全面的前端用户功能，以及快捷的支付功能、全面的用户功能以及强大的社区论坛功能使Joe主题成为更适合现代化网站的优雅主题！<a target="_blank" href="https://qm.qq.com/q/CtGxRbvHdm">访问官网</a>
  * 
- * @package Joe再续前缘
+ * @package Joe主题
  * @author 易航
- * @version 2.0
+ * @version 2.1
  * @link http://blog.yihang.info
+ * @Email 2136118039@qq.com
  */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
 	http_response_code(404);
 	exit(1);
+}
+if ($this->request->getHeader('x-requested-with') === 'XMLHttpRequest') {
+	return $this->need('module/index/list.php');
 }
 joe_header_cache(3600);
 ?>

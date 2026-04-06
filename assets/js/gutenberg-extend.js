@@ -1,6 +1,6 @@
 (function ($, wp, window) {
     $(document).ready(function () {
-        console.log('子比主题：增强编辑器');
+        console.log('主题：增强编辑器');
         var b = wp.blocks,
             c = wp.components,
             e = wp.element,

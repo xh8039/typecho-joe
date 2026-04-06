@@ -1,4 +1,15 @@
 <?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
 	http_response_code(404);
@@ -79,8 +90,8 @@ $form->addInput($joe_layout_max_width);
 
 $joe_external_link_redirect = new \Typecho\Widget\Helper\Form\Element\Select(
 	'joe_external_link_redirect',
-	['on' => '开启（默认）', 'off' => '关闭'],
-	'on',
+	['1' => '开启（默认）', '0' => '关闭'],
+	'1',
 	'外链重定向',
 	'介绍：开启此功能后，非本站的链接将会重定向至内部链接，点击后新页面跳转，有利于SEO。如果对正常链接造成了影响，请关闭此功能'
 );
@@ -170,31 +181,6 @@ $form->addInput($JCdnUrl);
 // );
 // $JMoreNavs->setAttribute('class', 'joe_content joe_global');
 // $form->addInput($JMoreNavs);
-
-$joe_custom_navs_value = "首页 || / || #icon-home-color
-
-文章分类 || #icon-caidanyemian
-    源码资源 || /category/code/ || #icon-wangzhanyuanma
-    技术教程 || /category/tech/ || #icon-book-color
-    程序软件 || /category/program/ || #icon-zhongyaruanjian
-    文创娱乐 || /category/infotainment/ || #icon-wallet-color
-    公告通知 || /category/notice/ || #icon-guanyu
-
-其他页面 || #icon-tag-color
-    友情链接 || /friend.html || #icon-copy-color
-    闲聊灌水 || /archives/300.html || fa-comments c-green
-    关于我们 || /about.html || #icon-guanyu";
-$joe_custom_navs = new \Typecho\Widget\Helper\Form\Element\Textarea(
-	'joe_custom_navs',
-	NULL,
-	$joe_custom_navs_value,
-	'自定义导航栏（非必填）',
-	'介绍：可随意设置导航链接和导航文字加图标的全新导航栏丨<a target="_blank" href="http://blog.yihang.info/archives/286.html">查看官网教程</a><br>
-	示例：<br>' . str_replace(["\n", ' '], ['<br>', '&nbsp;'], $joe_custom_navs_value)
-);
-$joe_custom_navs->setAttribute('class', 'joe_content joe_global');
-$joe_custom_navs->setInputsAttribute('rows', '13');
-$form->addInput($joe_custom_navs);
 
 $joe_motto = new \Typecho\Widget\Helper\Form\Element\Textarea(
 	'joe_motto',

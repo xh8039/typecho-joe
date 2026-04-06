@@ -1,9 +1,30 @@
 <?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
 	http_response_code(404);
 	exit(1);
 }
+
+$joe_close_backdrop = new \Typecho\Widget\Helper\Form\Element\Select(
+	'joe_close_backdrop',
+	['0' => '开启（默认）', '1' => '关闭'],
+	'0',
+	'背景高斯模糊',
+	'在支持的浏览器上部分UI(例如导航栏)会显示背景高斯模糊的特效，但此功能比较消耗浏览器性能<br><span style="color:#ff6f06">同时系统会自动检测用户浏览器性能情况，如果性能较差，将自动关闭此特效，以提供更流畅的体验</span>'
+);
+$joe_close_backdrop->setAttribute('class', 'joe_content joe_decoration');
+$form->addInput($joe_close_backdrop->multiMode());
 
 // $UISoundEffect = new \Typecho\Widget\Helper\Form\Element\Select(
 // 	'UISoundEffect',

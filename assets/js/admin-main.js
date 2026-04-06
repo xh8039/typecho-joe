@@ -1,15 +1,3 @@
-/*
- * @Author        : Qinver
- * @Url           : zibll.com
- * @Date          : 2020-09-29 13:18:40
- * @LastEditTime: 2025-10-20 21:14:33
- * @Email         : 770349780@qq.com
- * @Project       : Zibll子比主题
- * @Description   : 一款极其优雅的Wordpress主题|后台UI-JavaScript
- * @Read me       : 感谢您使用子比主题，主题源码有详细的注释，支持二次开发。
- * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
- */
-
 (function ($, document) {
     function cssTransition(n, t, o, i, e) {
         var r, a, s;
@@ -345,12 +333,12 @@
         var show_on_front_input = $('input[name="show_on_front"]:eq(0)');
         if (show_on_front_input.length) {
             var parent = show_on_front_input.parent();
-            parent.html(parent.html().replace('您的最新文章', '子比首页[最新文章]'));
+            parent.html(parent.html().replace('您的最新文章', '首页[最新文章]'));
 
             var page_for_posts = $('select[name="page_for_posts"]:eq(0)');
             if (page_for_posts.length) {
                 var page_for_posts_parent = page_for_posts.parent();
-                page_for_posts_parent.html(page_for_posts_parent.html().replace('文章页：', '子比首页：')).parent().append('<p class="description em09">将网站主页更改为其他页面后，您可以新建一个页面并将其设置为原本的子比首页</p>');
+                page_for_posts_parent.html(page_for_posts_parent.html().replace('文章页：', '首页：')).parent().append('<p class="description em09">将网站主页更改为其他页面后，您可以新建一个页面并将其设置为原本的首页</p>');
             }
 
             var posts_per_page = $('[for="posts_per_page"]:eq(0)');

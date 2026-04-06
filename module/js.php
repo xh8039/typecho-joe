@@ -1,4 +1,16 @@
 <?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
+
 $options = [];
 foreach (['joe_theme_mode', 'JDocumentTitle', 'JCustomFont', 'themeUrl', 'DynamicBackground', 'JWallpaper_Background_PC', 'JWallpaper_Background_WAP', 'JOnLineCountThreshold'] as $value) {
 	$options[$value] = $this->options->$value;
@@ -10,7 +22,7 @@ $highlight_zt = ['dark-theme' => $this->options->joe_article_code_theme_dark, 'w
 ?>
 <script type="text/javascript">
 	window._win = {
-		views: '',
+		views: '<?= $this->is('post') ? $this->cid : '' ?>',
 		www: '<?= $this->options->siteUrl ?>',
 		uri: '<?= rtrim(joe_theme_url('', false), '/') ?>',
 		ver: '<?= JOE_VERSION ?>',

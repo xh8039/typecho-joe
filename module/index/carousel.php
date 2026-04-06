@@ -1,7 +1,14 @@
 <?php
-
-/**
- * 轮播图模块
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
  */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
@@ -13,13 +20,13 @@ $carousel = [];
 $carousel_text = $this->options->JIndex_Carousel;
 $video = false;
 if ($carousel_text) {
-	$carousel_arr = joe_optionMulti($carousel_text, '/\R/', null);
+	$carousel_arr = joe_option_multi($carousel_text,['separator'=>false]);
 	if (count($carousel_arr) > 0) {
 		for ($i = 0; $i < count($carousel_arr); $i++) {
 			if (is_numeric($carousel_arr[$i])) {
 				$this->widget('Widget_Contents_Post@' . $carousel_arr[$i], 'cid=' . $carousel_arr[$i])->to($item);
-				$img = trim(joe_thumbnails_url($item)[0]);
-				$url = joe_root_relative_link($item->permalink);
+				$img = trim(joe_article_thumbnails_url($item)[0]);
+				$url = joe_relative_url($item->permalink);
 				$title = $item->title;
 			} else {
 				$img = trim(explode("||", $carousel_arr[$i])[0] ?? '');

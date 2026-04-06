@@ -1,4 +1,15 @@
 <?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
 	http_response_code(404);
@@ -8,7 +19,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 $joe_favicon = new \Typecho\Widget\Helper\Form\Element\Text(
 	'joe_favicon',
 	NULL,
-	'/usr/themes/' . THEME_NAME . '/assets/img/favicon.png',
+	'/usr/themes/' . JOE_THEME_NAME . '/assets/img/favicon.png',
 	'网站图标',
 	'介绍：自定义网站图标，也就是favicon.ico，建议48x48，修改后需清空浏览器缓存后才会显示新图像<br />
 	格式：图片 URL地址 或 Base64 地址'
@@ -19,7 +30,7 @@ $form->addInput($joe_favicon);
 $joe_manifest_icon = new \Typecho\Widget\Helper\Form\Element\Text(
 	'joe_manifest_icon',
 	NULL,
-	'/usr/themes/' . THEME_NAME . '/assets/img/icon.png',
+	'/usr/themes/' . JOE_THEME_NAME . '/assets/img/icon.png',
 	'桌面图标',
 	'介绍：添加到桌面的图标，建议148x148<br />
 	格式：图片 URL地址 或 Base64 地址'
@@ -30,7 +41,7 @@ $form->addInput($joe_manifest_icon);
 $joe_logo_light = new \Typecho\Widget\Helper\Form\Element\Text(
 	'joe_logo_light',
 	NULL,
-	'/usr/themes/' . THEME_NAME . '/assets/img/logo.png',
+	'/usr/themes/' . JOE_THEME_NAME . '/assets/img/logo.png',
 	'网站LOGO - 日间',
 	'介绍：显示在顶部的Logo 建议高度60px，请使用png格式的透明图片<br />
 	格式：图片 URL地址 或 Base64 地址'
@@ -41,7 +52,7 @@ $form->addInput($joe_logo_light);
 $joe_logo_dark = new \Typecho\Widget\Helper\Form\Element\Text(
 	'joe_logo_dark',
 	NULL,
-	'/usr/themes/' . THEME_NAME . '/assets/img/logo_dark.png',
+	'/usr/themes/' . JOE_THEME_NAME . '/assets/img/logo_dark.png',
 	'网站LOGO - 夜间',
 	'介绍：显示在顶部的Logo 建议高度60px，请使用png格式的透明图片<br />
 	格式：图片 URL地址 或 Base64 地址 <br />'

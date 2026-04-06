@@ -1,11 +1,22 @@
 <?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
 	http_response_code(404);
 	exit(1);
 }
 
-$joe_footer_tab_value = "icon-home-color || / || 首页\nicon-tag-color || /archives/230.html || APP\nicon-add-color || /admin/write-post.php || || 46px\nicon-msg-color || /admin/manage-comments.php || 消息\nicon-user-color-2 || /admin/profile.php || 我的";
+$joe_footer_tab_value = "icon-home-color || / || 首页\nicon-tag-color || /archives/230.html || APP\nicon-add-color || /admin/write-post.php || || 46px\nicon-msg-color || /admin/manage-comments.php || 消息\nicon-user-color-2 || /user/index || 我的";
 $joe_footer_tab = new \Typecho\Widget\Helper\Form\Element\Textarea(
 	'joe_footer_tab',
 	NULL,
@@ -86,7 +97,7 @@ $JFooterCenter2->setAttribute('class', 'joe_content joe_footer');
 $JFooterCenter2->setInputsAttribute('rows', '5');
 $form->addInput($JFooterCenter2);
 
-$qrcode_url = '/usr/themes/' . THEME_NAME . '/assets/img/qrcode.png';
+$qrcode_url = '/usr/themes/' . JOE_THEME_NAME . '/assets/img/qrcode.png';
 $JFooter_Icon_Contact_Value = "#icon-d-wechat || ![扫一扫加微信](" . $qrcode_url . ")\n#icon-d-qq || [QQ联系](https://wpa.qq.com/msgrd?v=3&uin=2136118039&site=qq&menu=yes)\n#icon-d-weibo || [微博](https://weibo.com/)\n#icon-d-email || [发邮件](mailto:2136118039@qq.com)";
 $JFooter_Icon_Contact = new \Typecho\Widget\Helper\Form\Element\Textarea(
 	'JFooter_Icon_Contact',

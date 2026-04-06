@@ -1,9 +1,14 @@
 <?php
 /*
- * @Author: 易航
- * @Url: blog.yihang.info
- * @Date: 2024-10-22 00:00:00
- * @LastEditTime: 2024-10-23 00:00:00
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
  */
 
 use think\facade\Db;
@@ -26,7 +31,7 @@ if (empty(Helper::options()->JYiPayApi)) exit('未配置易支付接口！');
 $epay_config['apiurl'] = trim(Helper::options()->JYiPayApi);
 
 if (empty(Helper::options()->JYiPayID)) exit('未配置易支付商户号！');
-$epay_config['partner'] = trim(Helper::options()->JYiPayID);
+$epay_config['pid'] = trim(Helper::options()->JYiPayID);
 
 if (empty(Helper::options()->JYiPayKey)) exit('未配置易支付商户密钥！');
 $epay_config['key'] = trim(Helper::options()->JYiPayKey);
@@ -76,17 +81,13 @@ if ($order['status']) {
 }
 if (Helper::options()->JPaymentOrderToAdminEmail == 'on' && !$order['admin_email']) {
 	$type = ['alipay' => '支付宝', 'wxpay' => '微信', 'qqpay' => 'QQ'];
-	$admin_email = joe_send_mail(
-		'有新的订单已支付',
-		'您的网站 [' . Helper::options()->title . '] 有新的订单已支付！',
-		[
-			'订单号' => $_GET['out_trade_no'],
-			'商品类型' => trim(end(explode('-', $order['name']))),
-			'商品' => $order['content_title'],
-			'付款明细' => $type[$order['type']] . ' ' . $order['money'],
-			'付款时间' => (empty($order['update_time']) ? date('Y-m-d H:i:s') : $order['update_time']),
-		]
-	);
+	$admin_email = joe_send_mail('有新的订单已支付', '您的网站 [' . Helper::options()->title . '] 有新的订单已支付！', [
+		'订单号' => $_GET['out_trade_no'],
+		'商品类型' => trim(explode('-', $order['name'])[0]),
+		'商品' => $order['content_title'],
+		'付款明细' => $type[$order['type']] . ' ' . $order['money'],
+		'付款时间' => (empty($order['update_time']) ? date('Y-m-d H:i:s') : $order['update_time']),
+	]);
 	if ($admin_email === true) {
 		Db::name('orders')->where('trade_no', $_GET['out_trade_no'])->update(['admin_email' => 1]);
 	}
@@ -94,18 +95,18 @@ if (Helper::options()->JPaymentOrderToAdminEmail == 'on' && !$order['admin_email
 if (Helper::options()->JPaymentOrderEmail == 'on' && is_numeric($order['user_id']) && !$order['user_email']) {
 	$user_info = Db::name('users')->where('uid', $order['user_id'])->find();
 	if (!empty($user_info)) {
-		$user_email = joe_send_mail(
-			'订单支付成功！',
-			'您好！' . $user_info['screenName'] . '，您在 [' . Helper::options()->title . '] 购买的商品已支付成功',
-			[
-				'类型' =>  trim(end(explode('-', $order['name']))),
-				'商品' => $order['content_title'],
-				'订单号' =>  $_GET['out_trade_no'],
-				'付款明细' => $type[$order['type']] . ' ' . $order['money'],
-				'付款时间' => (empty($order['update_time']) ? date('Y-m-d H:i:s') : $order['update_time'])
-			],
-			$user_info['mail']
-		);
+		$site_url = 'http://' . $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] . '/index.php';
+		$content = Db::name('contents')->where('cid', $order['content_cid'])->find();
+		$content_permalink = is_array($content) ? joe_content_permalink($content, $site_url) : '#';
+		$sub_title = '您好！' . $user_info['screenName'] . '，您在 [' . Helper::options()->title . '] 购买的商品已支付成功';
+		$user_email = joe_send_mail('订单支付成功！', $sub_title, [
+			'类型' =>  trim(explode('-', $order['name'])[0]),
+			'商品' => '<a target="_blank" href="' . $content_permalink . '" rel="noopener noreferrer">' . $order['content_title'] . '</a>',
+			'订单号' =>  $_GET['out_trade_no'],
+			'付款明细' => $type[$order['type']] . ' ' . $order['money'],
+			'付款时间' => (empty($order['update_time']) ? date('Y-m-d H:i:s') : $order['update_time']),
+			'订单详情' => '<a target="_blank" href="' . \Typecho\Common::url('user/order', $site_url) . '" rel="noopener noreferrer">查看订单</a>'
+		], $user_info['mail']);
 		if ($user_email === true) {
 			Db::name('orders')->where('trade_no', $_GET['out_trade_no'])->update(['user_email' => 1]);
 		}

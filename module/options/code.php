@@ -1,4 +1,15 @@
 <?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
 	http_response_code(404);
@@ -12,63 +23,63 @@ if (isset($_GET['joe_code'])) {
 		NULL,
 		'
 		<!-- 核心CSS -->
-		<link href="' . joe_cdn('codemirror/6.65.7/codemirror.min.css') . '" rel="stylesheet">
+		<link href="' . joe_cdn_url('codemirror/6.65.7/codemirror.min.css') . '" rel="stylesheet">
 	
 		<!-- dracula主题CSS -->
-		<link href="' . joe_cdn('codemirror/6.65.7/theme/dracula.min.css') . '" rel="stylesheet">
+		<link href="' . joe_cdn_url('codemirror/6.65.7/theme/dracula.min.css') . '" rel="stylesheet">
 	
 		<!-- 代码提示CSS -->
-		<link href="' . joe_cdn('codemirror/6.65.7/addon/hint/show-hint.min.css') . '" rel="stylesheet">
+		<link href="' . joe_cdn_url('codemirror/6.65.7/addon/hint/show-hint.min.css') . '" rel="stylesheet">
 	
 		<!-- 核心JS -->
-		<script src="' . joe_cdn('codemirror/6.65.7/codemirror.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/codemirror.min.js') . '"></script>
 	
 		<!-- 代码提示核心JS -->
-		<script src="' . joe_cdn('codemirror/6.65.7/addon/hint/show-hint.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/addon/hint/show-hint.min.js') . '"></script>
 	
 		<!-- JavaScript代码高亮 -->
-		<script src="' . joe_cdn('codemirror/6.65.7/mode/javascript/javascript.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/mode/javascript/javascript.min.js') . '"></script>
 	
 		<!-- CSS语法高亮 -->
-		<script src="' . joe_cdn('codemirror/6.65.7/mode/css/css.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/mode/css/css.min.js') . '"></script>
 			
 		<!-- HTML语法高亮 -->
-		<script src="' . joe_cdn('codemirror/6.65.7/mode/xml/xml.min.js') . '"></script>
-		<script src="' . joe_cdn('codemirror/6.65.7/mode/htmlmixed/htmlmixed.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/mode/xml/xml.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/mode/htmlmixed/htmlmixed.min.js') . '"></script>
 	
 		<!-- PHP代码高亮 -->
-		<script src="' . joe_cdn('codemirror/6.65.7/mode/clike/clike.min.js') . '"></script>
-		<script src="' . joe_cdn('codemirror/6.65.7/mode/php/php.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/mode/clike/clike.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/mode/php/php.min.js') . '"></script>
 	
 		<!-- JavaScript代码提示 -->
-		<script src="' . joe_cdn('codemirror/6.65.7/addon/hint/javascript-hint.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/addon/hint/javascript-hint.min.js') . '"></script>
 	
 		<!-- HTML语法提示 -->
-		<script src="' . joe_cdn('codemirror/6.65.7/addon/hint/xml-hint.min.js') . '"></script>
-		<script src="' . joe_cdn('codemirror/6.65.7/addon/hint/html-hint.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/addon/hint/xml-hint.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/addon/hint/html-hint.min.js') . '"></script>
 	
 		<!-- CSS语法提示 -->
-		<script src="' . joe_cdn('codemirror/6.65.7/addon/hint/css-hint.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/addon/hint/css-hint.min.js') . '"></script>
 	
 		<!-- PHP代码提示 -->
-		<!-- <script src="' . joe_cdn('codemirror/6.65.7/addon/hint/php-hint.min.js') . '"></script> -->
+		<!-- <script src="' . joe_cdn_url('codemirror/6.65.7/addon/hint/php-hint.min.js') . '"></script> -->
 	
 		<!-- anyword代码提示 -->
-		<script src="' . joe_cdn('codemirror/6.65.7/addon/hint/anyword-hint.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/addon/hint/anyword-hint.min.js') . '"></script>
 	
 		<!-- 匹配括号 -->
-		<script src="' . joe_cdn('codemirror/6.65.7/addon/edit/matchbrackets.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/addon/edit/matchbrackets.min.js') . '"></script>
 	
 		<!-- 自动闭合括号 -->
-		<script src="' . joe_cdn('codemirror/6.65.7/addon/edit/closebrackets.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/addon/edit/closebrackets.min.js') . '"></script>
 	
 		<!-- 一键注释 -->
-		<script src="' . joe_cdn('codemirror/6.65.7/addon/comment/comment.min.js') . '"></script>
+		<script src="' . joe_cdn_url('codemirror/6.65.7/addon/comment/comment.min.js') . '"></script>
 	
 		<!-- prettier格式化工具 -->
-		<script src="' . joe_cdn('js-beautify/1.15.1/beautify.min.js') . '"></script>
-		<script src="' . joe_cdn('js-beautify/1.15.1/beautify-css.min.js') . '"></script>
-		<script src="' . joe_cdn('js-beautify/1.15.1/beautify-html.min.js') . '"></script>
+		<script src="' . joe_cdn_url('js-beautify/1.15.1/beautify.min.js') . '"></script>
+		<script src="' . joe_cdn_url('js-beautify/1.15.1/beautify-css.min.js') . '"></script>
+		<script src="' . joe_cdn_url('js-beautify/1.15.1/beautify-html.min.js') . '"></script>
 	
 		<!-- 配置文件 -->
 		<script src="' . joe_theme_url('assets/typecho/config/js/joe.code.js') . '"></script>

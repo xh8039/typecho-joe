@@ -1,4 +1,16 @@
 <?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
+
 if (!defined('__TYPECHO_ROOT_DIR__')) {
 	http_response_code(404);
 	exit(1);
@@ -17,8 +29,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 <!-- 自定义CSS -->
 
 <?php
-$theme_color = empty($this->options->joe_theme_color_custom) ? $this->options->joe_theme_color : $this->options->joe_theme_color_custom;
-$theme_color = empty($theme_color) ? '268df7' : $theme_color;
+$theme_color = joe_theme_color();
 $theme_color_rgb = implode(',', joe_hex_to_rgb($theme_color));
 ?>
 <style>
@@ -27,7 +38,7 @@ $theme_color_rgb = implode(',', joe_hex_to_rgb($theme_color));
 	}
 
 	body {
-		--theme-color: #<?= $theme_color ?>;
+		--theme-color: <?= $theme_color ?>;
 		--focus-shadow-color: rgba(<?= $theme_color_rgb ?>, .4);
 		--focus-color-opacity1: rgba(<?= $theme_color_rgb ?>, .1);
 		--focus-color-opacity05: rgba(<?= $theme_color_rgb ?>, .05);
@@ -53,7 +64,10 @@ $theme_color_rgb = implode(',', joe_hex_to_rgb($theme_color));
 	}
 	if ($this->options->JLogo_Light_Effect == 'on') {
 		echo '.navbar-logo {overflow: hidden;position: relative;}.navbar-logo::before {content: "";position: absolute;inset: -50%;background: linear-gradient(45deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 60%);animation: JoeScanLight 2s infinite;transform: translateX(-30%);z-index: 10;}@keyframes JoeScanLight {to {transform: translateX(30%);}}';
-	} 
+	}
+	if ($this->options->joe_header_slider_nav_color) {
+		echo 'body.nav-fixed:not(.body-scroll):not(.mobile-navbar-show) .header.show-slide {--header-color:' . $this->options->joe_header_slider_nav_color . ';}';
+	}
 	if (joe_is_pc() && $this->options->JWallpaper_Background_PC) {
 		echo 'body {background-image: url("' . $this->options->JWallpaper_Background_PC . '");background-repeat: no-repeat;background-size: 100%;background-attachment: fixed;}';
 	}

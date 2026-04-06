@@ -1,12 +1,27 @@
+<?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
+?>
 <div class="text-center post-actions">
 	<a href="javascript:;" data-action="like" class="action action-like" data-pid="<?= $this->cid ?>"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-like"></use></svg><text>点赞</text><count><?= number_format($this->agree) ?></count></a>
-	<a href="javascript:;" data-toggle="modal" data-target="#rewards-modal-1" data-remote="<?= joe_api_url('user_rewards_modal?id=1') ?>" class="rewards action action-rewards"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-money"></use></svg><text>赞赏</text></a>
 	<?php
+	if (joe_is_reward()) {
+		echo '<a href="javascript:;" data-toggle="modal" data-target="#rewards-modal-1" data-remote="'.joe_api_url('user_rewards_modal?id=1').'" class="rewards action action-rewards"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-money"></use></svg><text>赞赏</text></a>';
+	}
 	if (joe_is_mobile()) {
 		?>
 		<a data-class="modal-mini" mobile-bottom="true" data-height="243" data-remote="<?= joe_api_url('share_modal',['id'=>$this->cid,'type'=>'post']) ?>" class="action action-share" href="javascript:;" data-toggle="RefreshModal"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-share"></use></svg><text>分享</text></a>
 		<?php
-	}else {
+	} else {
 		?>
 	<span class="hover-show dropup action action-share">
 		<svg class="icon" aria-hidden="true"><use xlink:href="#icon-share"></use></svg>
@@ -16,7 +31,7 @@
 				<?php
 				$url = urlencode($this->permalink);
 				$title = urlencode($this->title.' - '.$this->options->title);
-				$pic = urlencode(joe_thumbnails_url($this)[0]);
+				$pic = urlencode(joe_article_thumbnails_url($this)[0]);
 				$desc = urlencode($this->title);
 				?>
 				<a rel="nofollow" class="share-btn qzone" target="_blank" title="QQ空间" href="<?= joe_externa_to_internal_link("https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=$url&title=$title&pics=$pic&summary=$desc")['url'] ?>"><icon><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qzone-color"></use></svg></icon><text>QQ空间<text></a>
@@ -30,11 +45,7 @@
 		<?php
 	}
 	?>
-	<!-- <a href="javascript:;" data-action="favorite" class="action action-favorite" data-pid="1">
-		<svg class="icon" aria-hidden="true"><use xlink:href="#icon-favorite"></use></svg>
-		<text>收藏</text>
-		<count></count>
-	</a> -->
+	<a href="javascript:;" <?= $this->user->hasLogin() ? 'data-action="favorite"' : '' ?> class="action action-favorite <?= $this->user->hasLogin() ? '' : 'signin-loader' ?>" data-pid="<?= $this->cid ?>"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-favorite"></use></svg><text>收藏</text><count></count></a>
 </div>
 <div class="modal fade" id="rewards-modal-1" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-mini rewards-popover" style="" role="document">

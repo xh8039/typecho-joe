@@ -1,7 +1,14 @@
 <?php
-
-/**
- * 文章列表
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
  */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
@@ -17,10 +24,12 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 				<div class="flex ac">
 					<div class="option-dropdown splitters-this-r dropdown flex0">排序</div>
 					<ul class="list-inline scroll-x mini-scrollbar option-items">
-						<a rel="nofollow" ajax-replace="true" class="ajax-next" href="http://blog.yihang.info/?orderby=modified">更新</a>
-						<a rel="nofollow" ajax-replace="true" class="ajax-next" href="http://blog.yihang.info/?orderby=views">浏览</a>
-						<a rel="nofollow" ajax-replace="true" class="ajax-next" href="http://blog.yihang.info/?orderby=like">点赞</a>
-						<a rel="nofollow" ajax-replace="true" class="ajax-next" href="http://blog.yihang.info/?orderby=comment_count">评论</a>
+						<?= joe_article_list_order_html() ?>
+						<!-- <a rel="nofollow" ajax-replace="true" class="ajax-next" href="?orderby=created">发布</a>
+						<a rel="nofollow" ajax-replace="true" class="ajax-next" href="?orderby=modified">更新</a>
+						<a rel="nofollow" ajax-replace="true" class="ajax-next" href="?orderby=views">浏览</a>
+						<a rel="nofollow" ajax-replace="true" class="ajax-next" href="?orderby=like">点赞</a>
+						<a rel="nofollow" ajax-replace="true" class="ajax-next" href="?orderby=comment_count">评论</a> -->
 					</ul>
 				</div>
 			</div>
@@ -35,8 +44,8 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 					if ($item->next()) echo joe_article_item($item, ['badge' => '置顶']);
 				}
 			}
-			if ($this->is('index')) $index_hide_categorize_list = joe_optionMulti(Helper::options()->JIndex_Hide_Categorize, '||', false);
-			while ($article = $this->next()) {
+			if ($this->is('index')) $index_hide_categorize_list = joe_option_multi(Helper::options()->JIndex_Hide_Categorize, ['line' => '||', 'separator' => false]);
+			while ($this->next()) {
 				if ($this->is('index')) {
 					$categorize_slug_list = [];
 					foreach ($this->categories as $key => $value) {

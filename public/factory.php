@@ -1,6 +1,15 @@
 <?php
-
-use think\facade\Db;
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
 	http_response_code(404);
@@ -8,283 +17,23 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 }
 
 /* 加强评论拦截功能 */
-Typecho\Plugin::factory('Widget_Feedback')->comment = array('JoeCommentIntercept', 'message');
-class JoeCommentIntercept
-{
-	public static function waiting($text)
-	{
-		// 判断用户输入是否大于字符
-		if (Helper::options()->JTextLimit && mb_strlen($text) > Helper::options()->JTextLimit) {
-			Typecho\Cookie::set('__typecho_remember_text', $text);
-			throw new Typecho\Widget\Exception(_t('评论的内容超出 ' . Helper::options()->JTextLimit . ' 字符限制！'));
-		}
-
-		// 判断评论是否至少包含一个中文
-		if (joe_user_alloc()->group != 'administrator' && Helper::options()->JLimitOneChinese == "on" && preg_match("/[\x{4e00}-\x{9fa5}]/u", $text) == 0) {
-			Typecho\Cookie::set('__typecho_remember_text', $text);
-			throw new Typecho\Widget\Exception(_t('评论至少包含一个中文！'));
-		}
-
-		// 判断评论内容是否包含敏感词
-		if (Helper::options()->JSensitiveWords && joe_check_sensitive_words(Helper::options()->JSensitiveWords, $text)) return true;
-
-		// 评论敏感词API检测
-		if (Helper::options()->JSensitiveWordApi) {
-			$sensitive_word_api = joe_optionMulti(Helper::options()->JSensitiveWordApi);
-			$sensitive_word_api_info = joe_optionMulti($sensitive_word_api[0], ['api', 'content', 'is', 'message']);
-			$sensitive_word_api_header = empty($sensitive_word_api[1]) ? null : $sensitive_word_api[1];
-
-			if (empty($sensitive_word_api_info['api'])) throw new Typecho\Widget\Exception(_t('评论敏感词检测API地址设置错误'));
-			if (empty($sensitive_word_api_info['content'])) throw new Typecho\Widget\Exception(_t('评论敏感词检测API请求内容字段设置错误'));
-			if (empty($sensitive_word_api_info['is'])) throw new Typecho\Widget\Exception(_t('评论敏感词检测API响应违规字段设置错误'));
-
-			$client = new network\http\Client(['timeout' => 5]);
-			$IP = joe_request()->getIp();
-			if (!empty($IP)) $client->header([
-				'client-ip' => $IP,
-				'x-real-ip' => $IP,
-				'x-forwarded-for' => $IP,
-			]);
-			if (is_array($sensitive_word_api_header)) $client->header($sensitive_word_api_header);
-			$response = $client->post($sensitive_word_api_info['api'], [
-				$sensitive_word_api_info['content'] => $text,
-				'userIp' => $IP,
-			]);
-			$data = $response->toArray();
-
-			if (is_array($data) && !empty($data)) {
-				$error_message = $sensitive_word_api_info['message'];
-				if (!isset($data[$sensitive_word_api_info['is']]) && $error_message && isset($data[$error_message])) {
-					throw new Typecho\Widget\Exception(_t('评论敏感词检测接口响应失败：' . $data[$error_message]));
-				} else if ($data[$sensitive_word_api_info['is']]) {
-					return true;
-				}
-			} else {
-				throw new Typecho\Widget\Exception(_t('评论敏感词检测接口响应失败：' . $response->error()));
-			}
-		}
-
-		return false;
-	}
-	public static function message($comment)
-	{
-		if (Helper::options()->JCommentStatus == 'off') {
-			throw new Typecho\Widget\Exception(_t('叼毛 不要想着强制评论！'));
-			return false;
-		}
-		if (Helper::options()->JcommentLogin == 'on' && !is_numeric(JOE_USER_ID)) {
-			throw new Typecho\Widget\Exception(_t('叼毛 老老实实登录评论！'));
-			return false;
-		}
-
-		if (joe_user_alloc()->group !== 'administrator' && self::waiting($comment['text'])) {
-			$comment['status'] = 'waiting';
-		}
-
-		// Typecho\Cookie::delete('__typecho_remember_text');
-		return $comment;
-	}
-}
+Typecho\Plugin::factory('Widget\Feedback')->comment = ['joe\typecho\CommentIntercept', 'message'];
 
 /* 邮件通知 */
 if (Helper::options()->JCommentMail === 'on' && joe_email_config()) {
-	if (isset($_SESSION['joe_send_mail_time'])) {
-		if (time() - $_SESSION['joe_send_mail_time'] >= 120) {
-			Typecho\Plugin::factory('Widget_Feedback')->finishComment = array('JoeCommentEmail', 'send');
-		}
-	} else {
-		Typecho\Plugin::factory('Widget_Feedback')->finishComment = array('JoeCommentEmail', 'send');
-	}
-}
-
-class JoeCommentEmail
-{
-	public static function send($comment)
-	{
-		$text = $comment->text;
-		$text = joe_parse_comment_reply($text);
-		$text = preg_replace('/\{!\{([^\"]*)\}!\}/', '<img referrerpolicy="no-referrer" rel="noreferrer" style="max-width: 100%;vertical-align: middle;" src="' . trim(Helper::options()->siteUrl, '/') . '$1"/>', $text);
-		/* 如果是博主发的评论 */
-		if ($comment->authorId == $comment->ownerId) {
-			/* 发表的评论是回复别人 */
-			if ($comment->parent != 0) {
-				$parent_comment = Db::name('comments')->where('coid', $comment->parent)->find();
-				/* 被回复的人不是自己时，发送邮件 */
-				if ($parent_comment['mail'] != $comment->mail) {
-					$text = CommentLink($text, $comment->permalink, '回复');
-					$parent_text = joe_parse_comment_reply($parent_comment['text']);
-					$parent_text = preg_replace('/\{!\{([^\"]*)\}!\}/', '<img referrerpolicy="no-referrer" rel="noreferrer" style="max-width: 100%;vertical-align: middle;" src="' . trim(Helper::options()->siteUrl, '/') . '$1"/>', $parent_text);
-					joe_send_mail(
-						'您在 [' . $comment->title . '] 的评论有了新的回复',
-						'博主 [ ' . $comment->author . ' ] 在《 <a style="color: #12addb;text-decoration: none;" href="' . substr($comment->permalink, 0, strrpos($comment->permalink, "#")) . '" target="_blank">' . $comment->title . '</a> 》上回复了您：',
-						['评论' => $parent_text, '回复' => $text],
-						$parent_comment['mail']
-					);
-					$_SESSION['joe_send_mail_time'] = time();
-				}
-			}
-			/* 如果是游客发的评论 */
-		} else {
-			/* 如果是直接发表的评论，不是回复别人，那么发送邮件给博主 */
-			if ($comment->parent == 0) {
-				$authorMail = Db::name('users')->where('uid', $comment->ownerId)->value('mail');
-				if ($authorMail) {
-					$text = CommentLink($text, $comment->permalink, '评论');
-					joe_send_mail(
-						'您的文章 [' . $comment->title . '] 收到一条新的评论',
-						$comment->author . ' [' . $comment->ip . '] 在您的《 <a style="color: #12addb;text-decoration: none;" href="' . substr($comment->permalink, 0, strrpos($comment->permalink, "#")) . '" target="_blank">' . $comment->title . '</a> 》上发表评论：',
-						$text,
-						$authorMail
-					);
-					$_SESSION['joe_send_mail_time'] = time();
-				}
-				/* 如果发表的评论是回复别人 */
-			} else {
-				$parent_comment = Db::name('comments')->where('coid', $comment->parent)->find();
-				/* 被回复的人不是自己时，发送邮件 */
-				if ($parent_comment['mail'] != $comment->mail) {
-					$text = CommentLink($text, $comment->permalink, '回复');
-					$parent_text = joe_parse_comment_reply($parent_comment['text']);
-					$parent_text = preg_replace('/\{!\{([^\"]*)\}!\}/', '<img referrerpolicy="no-referrer" rel="noreferrer" style="max-width: 100%;vertical-align: middle;" src="' . trim(Helper::options()->siteUrl, '/') . '$1"/>', $parent_text);
-					joe_send_mail(
-						'您在 [' . $comment->title . '] 的评论有了新的回复',
-						$comment->author . ' 在《 <a style="color: #12addb;text-decoration: none;" href="' . substr($comment->permalink, 0, strrpos($comment->permalink, "#")) . '" target="_blank">' . $comment->title . '</a> 》上回复了您：',
-						['评论' => $parent_text, '回复' => $text],
-						$parent_comment['mail']
-					);
-					$_SESSION['joe_send_mail_time'] = time();
-				}
-			}
-		}
-	}
+	Typecho\Plugin::factory('Widget\Feedback')->finishComment = ['joe\typecho\CommentEmail', 'send'];
 }
 
 /* 加强后台编辑器功能 */
 if (Helper::options()->JEditor !== 'off') {
-	Typecho\Plugin::factory('admin/write-post.php')->richEditor  = array('Editor', 'Edit');
-	Typecho\Plugin::factory('admin/write-post.php')->option  = array('Editor', 'labelSelection');
-	Typecho\Plugin::factory('admin/write-page.php')->richEditor  = array('Editor', 'Edit');
-	Typecho\Plugin::factory('admin/write-page.php')->option  = array('Editor', 'visibility');
+	Typecho\Plugin::factory('admin/write-post.php')->richEditor  = ['joe\typecho\Editor', 'Edit'];
+	Typecho\Plugin::factory('admin/write-post.php')->option  = ['joe\typecho\Editor', 'labelSelection'];
+	Typecho\Plugin::factory('admin/write-page.php')->richEditor  = ['joe\typecho\Editor', 'Edit'];
+	Typecho\Plugin::factory('admin/write-page.php')->option  = ['joe\typecho\Editor', 'visibility'];
 }
 
-class Editor
-{
-	public static function Edit()
-	{
-?>
-		<link async rel="stylesheet" href="<?= joe_theme_url('assets/plugin/twitter-bootstrap/3.4.1/css/tooltip.css', false); ?>">
-		<link rel="stylesheet" href="<?= joe_theme_url('assets/typecho/write/css/joe.write.css') ?>">
-
-		<!-- 自定义CSS样式 -->
-		<style>
-			<?php Helper::options()->JCustomCSS(); ?>
-		</style>
-		<!-- 自定义CSS样式 -->
-
-		<script>
-			window.JoeConfig = {
-				uploadAPI: `<?php Helper::security()->index('/action/upload'); ?>`,
-				emojiAPI: `<?php Helper::options()->themeUrl('assets/typecho/write/json/emoji.json') ?>`,
-				expressionAPI: `<?php Helper::options()->themeUrl('assets/json/joe.owo.json') ?>`,
-				characterAPI: `<?php Helper::options()->themeUrl('assets/typecho/write/json/character.json') ?>`,
-				playerAPI: `<?php empty(Helper::options()->JCustomPlayer) ? 'false' : Helper::options()->JCustomPlayer; ?>`,
-				autoSave: <?php Helper::options()->autoSave(); ?>,
-				themeURL: `<?php Helper::options()->themeUrl(); ?>`,
-				JPrismTheme: `<?= Helper::options()->JPrismTheme ?>`,
-				canPreview: false
-			}
-			window.Joe = window.Joe || {};
-			window.Joe.BASE_API = `<?= joe_root_relative_link(joe_index('joe/api')) ?>/`;
-			window.Joe.CDN_URL = `<?= joe_cdn() ?>`;
-			window.Joe.THEME_URL = `<?= joe_theme_url('', false) ?>`;
-		</script>
-
-		<script src="<?= joe_theme_url('assets/plugin/twitter-bootstrap/3.4.1/js/tooltip.js', false); ?>"></script>
-		<script src="<?= joe_theme_url('assets/plugin/layer/3.7.0/layer.js', false) ?>"></script>
-		<script src="<?= joe_theme_url('assets/typecho/write/parse/parse.min.js', false) ?>"></script>
-		<script src="<?= joe_theme_url('assets/typecho/write/dist/CodeMirror.js', false) ?>"></script>
-		<script>
-			window.Joe.tooltip = (selectors = '', options = {}) => {
-	const tooltip = '[data-toggle="tooltip"]:not([data-original-title])';
-	const selector = selectors ? `${selectors}${tooltip},${selectors} ${tooltip}` : tooltip;
-	if (Joe.IS_MOBILE && options instanceof Object) {
-		$(selector).each(function () {
-			['data-toggle', 'data-placement'].forEach(value => {
-				$(this).removeAttr(value);
-			});
-		});
-	} else {
-		if (options instanceof Object) options.container = options.container ? options.container : 'body';
-		$(selector).tooltip(options);
-		if (options instanceof Object) $(selector).on('click', function (event) {
-			$(this).tooltip('hide');
-		});
-	}
-}
-		</script>
-		<script src="<?= joe_theme_url('assets/js/function.js') ?>"></script>
-		<script src="<?= joe_theme_url('assets/typecho/write/js/tools.js') ?>"></script>
-		<script src="<?= joe_theme_url('assets/typecho/write/js/actions.js') ?>"></script>
-		<script src="<?= joe_theme_url('assets/typecho/write/js/create.js') ?>"></script>
-		<script src="<?= joe_theme_url('assets/typecho/write/js/index.js') ?>"></script>
-	<?php
-	}
-
-	public static function labelSelection()
-	{
-?>
-		<section class="typecho-post-option">
-			<style>
-				.tagshelper {
-					list-style: none;
-					border: 1px solid #D9D9D6;
-					padding: 6px;
-					max-height: 240px;
-					overflow: auto;
-					background-color: #FFF;
-					border-radius: 2px;
-				}
-
-				.tagshelper a {
-					cursor: pointer;
-					padding: 0px 6px;
-					margin: 2px 0;
-					display: inline-block;
-					border-radius: 2px;
-					text-decoration: none;
-					transition: 0.1s;
-				}
-
-				.tagshelper a:hover {
-					background: #ccc;
-					color: #fff;
-				}
-			</style>
-			<label for="token-input-tags" class="typecho-label"><?php _e('标签选择'); ?></label>
-			<ul class="tagshelper">
-				<?php
-				Typecho\Widget::widget('Widget_Metas_Tag_Cloud')->to($tags);
-				if ($tags->have()) {
-					$i = 0;
-					while ($tags->next()) {
-						echo "<a onclick=\"$('#tags').tokenInput('add', {id: '" . $tags->name . "', tags: '" . $tags->name . "'});\">", $tags->name, "</a>";
-						$i++;
-					}
-				}
-				?>
-			</ul>
-		</section>
-	<?php
-	}
-
-	public static function visibility()
-	{
-	?>
-		<script>
-			document.addEventListener('DOMContentLoaded', () => {
-				$('select[name=visibility]').append(`<option value="private">私密</option>`);
-			})
-		</script>
-<?php
-	}
-}
+Typecho\Plugin::factory('Widget\Archive')->indexHandle = ['joe\typecho\Archive', 'index'];
+Typecho\Plugin::factory('Widget\Archive')->categoryHandle = ['joe\typecho\Archive', 'category'];
+Typecho\Plugin::factory('Widget\Archive')->tagHandle = ['joe\typecho\Archive', 'tag'];
+Typecho\Plugin::factory('Widget\Archive')->searchHandle = ['joe\typecho\Archive', 'search'];
+Typecho\Plugin::factory('Widget\Archive')->authorHandle = ['joe\typecho\Archive', 'author'];

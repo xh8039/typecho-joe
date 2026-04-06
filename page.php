@@ -1,4 +1,16 @@
 <?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
+
 if (!defined('__TYPECHO_ROOT_DIR__')) {
 	http_response_code(404);
 	exit(1);
@@ -19,9 +31,7 @@ $this->need('module/single/pjax.php');
 		<div class="content-wrap">
 			<div class="content-layout">
 				<article class="article page-article main-bg theme-box box-body radius8 main-shadow">
-					<div class="wp-posts-content">
-						<?= joe_parse_content($this); ?>
-					</div>
+					<div class="wp-posts-content"><?= joe_article_content_parse($this); ?></div>
 				</article>
 			</div>
 		</div>

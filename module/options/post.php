@@ -1,4 +1,15 @@
 <?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
 	http_response_code(404);
@@ -19,7 +30,7 @@ $joe_post_list_mode = new \Typecho\Widget\Helper\Form\Element\Select(
 	'joe_post_list_mode',
 	['list' => '列表模式（默认）', 'card' => '卡片模式'],
 	'list',
-	'文章列表模式'
+	'文章列表 - 显示模式'
 );
 $joe_post_list_mode->setAttribute('class', 'joe_content joe_post');
 $form->addInput($joe_post_list_mode->multiMode());
@@ -28,20 +39,79 @@ $joe_article_list_title_bold = new \Typecho\Widget\Helper\Form\Element\Select(
 	'joe_article_list_title_bold',
 	['off' => '关闭（默认）', 'on' => '开启'],
 	'off',
-	'文章列表标题粗体显示'
+	'文章列表 - 标题粗体'
 );
 $joe_article_list_title_bold->setAttribute('class', 'joe_content joe_post');
 $form->addInput($joe_article_list_title_bold->multiMode());
+
+$joe_article_image_cover = new \Typecho\Widget\Helper\Form\Element\Select(
+	'joe_article_image_cover',
+	['1' => '开启（默认）', '0' => '关闭'],
+	'1',
+	'文章页面 - 图片封面',
+	'允许设置文章页顶部显示封面图'
+);
+$joe_article_image_cover->setAttribute('class', 'joe_content joe_post');
+$form->addInput($joe_article_image_cover->multiMode());
 
 $joe_article_content_indent = new \Typecho\Widget\Helper\Form\Element\Select(
 	'joe_article_content_indent',
 	['off' => '关闭（默认）', 'on' => '开启'],
 	'off',
-	'文章内容段落缩进',
+	'文章页面 - 内容段落缩进',
 	'开启后文章内容每一个段落首行将向右偏移2个文字距离'
 );
 $joe_article_content_indent->setAttribute('class', 'joe_content joe_post');
 $form->addInput($joe_article_content_indent->multiMode());
+
+$joe_article_motto_box = new \Typecho\Widget\Helper\Form\Element\Select(
+	'joe_article_motto_box',
+	['on' => '开启（默认）', 'off' => '关闭'],
+	'on',
+	'文章页面 - 下方独立一言版块'
+);
+$joe_article_motto_box->setAttribute('class', 'joe_content joe_post');
+$form->addInput($joe_article_motto_box->multiMode());
+
+$joe_article_copyright = new \Typecho\Widget\Helper\Form\Element\Textarea(
+	'joe_article_copyright',
+	NULL,
+	'文章版权归作者所有，未经允许请勿转载。',
+	'文章页面 - 版权声明',
+	'支持HTML代码，请注意代码规范及标签闭合'
+);
+$joe_article_copyright->setAttribute('class', 'joe_content joe_post');
+$form->addInput($joe_article_copyright);
+
+$joe_article_action_top_text = new \Typecho\Widget\Helper\Form\Element\Text(
+	'joe_article_action_top_text',
+	NULL,
+	'喜欢就支持一下吧',
+	'文章页面 - 页脚文案',
+	'文章底部打赏、分享按钮上面的文字'
+);
+$joe_article_action_top_text->setAttribute('class', 'joe_content joe_post');
+$form->addInput($joe_article_action_top_text);
+
+$JWeChatRewardImg = new \Typecho\Widget\Helper\Form\Element\Text(
+	'JWeChatRewardImg',
+	NULL,
+	NULL,
+	'文章页面 - 微信打赏收款码',
+	'介绍：微信赞赏收款码链接，不填写则不使用<br>格式：图片文件直链地址 或 Base64地址'
+);
+$JWeChatRewardImg->setAttribute('class', 'joe_content joe_post');
+$form->addInput($JWeChatRewardImg);
+
+$JAlipayRewardImg = new \Typecho\Widget\Helper\Form\Element\Text(
+	'JAlipayRewardImg',
+	NULL,
+	NULL,
+	'文章页面 - 支付宝打赏收款码',
+	'介绍：支付宝赞赏收款码链接，不填写则不使用<br>格式：图片文件直链地址 或 Base64地址'
+);
+$JAlipayRewardImg->setAttribute('class', 'joe_content joe_post');
+$form->addInput($JAlipayRewardImg);
 
 // $JPost_Title_Center = new \Typecho\Widget\Helper\Form\Element\Select(
 // 	'JPost_Title_Center',
@@ -162,20 +232,11 @@ $joe_article_content_nav = new \Typecho\Widget\Helper\Form\Element\Select(
 	'joe_article_content_nav',
 	['on' => '开启（默认）', 'off' => '关闭'],
 	'on',
-	'文章目录树',
+	'文章功能 - 文章目录树',
 	'开启后请自行添加文章目录树模块到侧边栏（文章内标题超过3个才会显示）'
 );
 $joe_article_content_nav->setAttribute('class', 'joe_content joe_post');
 $form->addInput($joe_article_content_nav->multiMode());
-
-$joe_article_motto_box = new \Typecho\Widget\Helper\Form\Element\Select(
-	'joe_article_motto_box',
-	['on' => '开启（默认）', 'off' => '关闭'],
-	'on',
-	'文章下方独立一言'
-);
-$joe_article_motto_box->setAttribute('class', 'joe_content joe_post');
-$form->addInput($joe_article_motto_box->multiMode());
 
 // $JOverdue = new \Typecho\Widget\Helper\Form\Element\Text(
 // 	'JOverdue',
@@ -227,46 +288,6 @@ $joe_article_code_theme_dark = new \Typecho\Widget\Helper\Form\Element\Select(
 $joe_article_code_theme_dark->setAttribute('class', 'joe_content joe_post');
 $form->addInput($joe_article_code_theme_dark->multiMode());
 
-$joe_article_copyright = new \Typecho\Widget\Helper\Form\Element\Textarea(
-	'joe_article_copyright',
-	NULL,
-	'文章版权归作者所有，未经允许请勿转载。',
-	'文章版权提示内容',
-	'支持HTML代码，请注意代码规范及标签闭合'
-);
-$joe_article_copyright->setAttribute('class', 'joe_content joe_post');
-$form->addInput($joe_article_copyright);
-
-$joe_article_action_top_text = new \Typecho\Widget\Helper\Form\Element\Text(
-	'joe_article_action_top_text',
-	NULL,
-	'喜欢就支持一下吧',
-	'文章页脚文案',
-	'文章底部打赏、分享按钮上面的文字'
-);
-$joe_article_action_top_text->setAttribute('class', 'joe_content joe_post');
-$form->addInput($joe_article_action_top_text);
-
-$JWeChatRewardImg = new \Typecho\Widget\Helper\Form\Element\Text(
-	'JWeChatRewardImg',
-	NULL,
-	NULL,
-	'微信打赏收款码',
-	'介绍：微信赞赏收款码链接，不填写则不使用<br>格式：图片文件直链地址 或 Base64地址'
-);
-$JWeChatRewardImg->setAttribute('class', 'joe_content joe_post');
-$form->addInput($JWeChatRewardImg);
-
-$JAlipayRewardImg = new \Typecho\Widget\Helper\Form\Element\Text(
-	'JAlipayRewardImg',
-	NULL,
-	NULL,
-	'支付宝打赏收款码',
-	'介绍：支付宝赞赏收款码链接，不填写则不使用<br>格式：图片文件直链地址 或 Base64地址'
-);
-$JAlipayRewardImg->setAttribute('class', 'joe_content joe_post');
-$form->addInput($JAlipayRewardImg);
-
 // $JQQRewardImg = new \Typecho\Widget\Helper\Form\Element\Text(
 // 	'JQQRewardImg',
 // 	NULL,
@@ -279,9 +300,9 @@ $form->addInput($JAlipayRewardImg);
 
 $JEditor = new \Typecho\Widget\Helper\Form\Element\Select(
 	'JEditor',
-	array('on' => '开启（默认）','off' => '关闭'),
+	array('on' => '开启（默认）', 'off' => '关闭'),
 	'on',
-	'是否启用Joe自定义编辑器',
+	'文章功能 - Joe自定义编辑器',
 	'介绍：开启后，文章编辑器将替换成Joe编辑器 <br>
 		 其他：目前编辑器处于拓展阶段，如果想继续使用原生编辑器，关闭此项即可'
 );

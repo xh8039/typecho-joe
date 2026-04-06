@@ -1,4 +1,15 @@
 <?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
 	http_response_code(404);
@@ -7,8 +18,8 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 
 $JUser_Switch = new \Typecho\Widget\Helper\Form\Element\Select(
 	'JUser_Switch',
-	array('on' => '开启（默认）', 'off' => '关闭'),
-	'on',
+	array('1' => '开启（默认）', '0' => '关闭'),
+	'1',
 	'是否开启主题自带登录注册功能',
 	'介绍：开启后博客将享有更优美的登录注册页面<br>
 	注意：启用后不可使用其他登录插件 以免产生冲突<br>

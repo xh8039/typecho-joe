@@ -1,4 +1,15 @@
 <?php
+/*
+ * @Author        : 易航
+ * @Url           : blog.yihang.info
+ * @Date          : 2026-03-25 00:00:00
+ * @LastEditTime  : 2026-03-27 00:00:00
+ * @Email         : 2136118039@qq.com
+ * @Project       : Joe主题
+ * @Description   : 一款优雅极速的Typecho主题
+ * @Read me       : 感谢您使用Joe主题，主题源码有详细的注释，支持二次开发。
+ * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
+ */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
 	http_response_code(404);
@@ -132,8 +143,69 @@ function joe_check_xss($text)
 /* Joe核心文件 */
 require_once JOE_ROOT . 'public/common.php';
 
-// if (!empty(Helper::options()->JCustomFunctionsCode)) {
-// 	file_put_contents(JOE_ROOT . 'JCustomFunctionsCode.php', Helper::options()->JCustomFunctionsCode);
-// 	include_once JOE_ROOT . 'JCustomFunctionsCode.php';
-// 	unlink(JOE_ROOT . 'JCustomFunctionsCode.php');
-// }
+function joe_markdown_hide($content, $post, $login)
+{
+	joe_check_auth();
+	// 如果内容中不存在 {hide} 标签，直接返回原内容
+	if (strpos($content, '{hide') === false) return $content;
+
+	// $hide_tag = joe_nested_tag_parse($content);
+
+	if ($post->fields->hide == 'pay') {
+		$hide_html = '';
+	}
+
+	// 判断是否显示隐藏内容
+	$showContent = false;
+	if ($post->fields->hide == 'login') {
+		$showContent = $login; // 是否登录决定是否显示内容
+	} else {
+		// 获取用户邮箱地址，登录用户使用全局变量，未登录用户使用文章记住的邮箱
+		$user_mail = $login ? joe_user_alloc()->mail : $post->remember('mail', true);
+		$comment = null;
+
+		// 如果邮箱不为空 查询评论信息
+		if (!empty($user_mail)) $comment = Db::name('comments')->where(['cid' => $post->cid, 'mail' => $user_mail])->find();
+
+		if ($post->fields->hide == 'pay' && $post->fields->price > 0) {
+			// 查询支付信息
+			$payment = Db::name('orders')->where(function ($query) {
+				$query->where('ip', \Typecho\Request::getInstance()->getIp())->whereOr('user_id', JOE_USER_ID);
+			})->where(['status' => 1, 'content_cid' => $post->cid])->find();
+			$showContent = !empty($payment); // 是否已支付决定是否显示内容
+		} else {
+			$showContent = !empty($comment); // 是否已评论决定是否显示内容
+		}
+	}
+
+	if ($showContent) {
+		// 只在需要显示内容时移除 {hide} 和 {/hide} 标签
+		$content = strtr($content, array("{hide}<br>" => NULL, "<br>{/hide}" => NULL));
+		$content = strtr($content, array("{hide}" => NULL, "{/hide}" => NULL));
+	} else {
+		// 如果隐藏内容没有被显示，保留占位符
+		// 隐藏块
+		if (strpos($content, '<br>{hide') !== false || strpos($content, '<p>{hide') !== false) {
+			$hide_html = '<div data-type="reply" class="wp-block-zibllblock-hide-content"><span><div class="hidden-box" reply-show="true" reload-hash="#hidden-box-comment"><a class="hidden-text" href="javascript:(scrollTopTo(\'#comments\',-50));"><i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;此处内容已隐藏，请评论后刷新页面查看.</a></div></span></div>';
+			$content = preg_replace('/\<br\>{hide[^}]*}([\s\S]*?){\/hide}/', '<br>' . $hide_html, $content);
+			$content = preg_replace('/\<p\>{hide[^}]*}([\s\S]*?){\/hide}/', '<p>' . $hide_html, $content);
+		}
+		// 隐藏行
+		$content = preg_replace('/{hide[^}]*}([\s\S]*?){\/hide}/', '<a style="display: inline;padding:0" class="hidden-text" href="javascript:(scrollTopTo(\'#comments\',-50));"><i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;此处内容已隐藏，请评论后刷新页面查看.</a>', $content);
+	}
+
+	// 处理付费内容显示逻辑 非爬虫才显示付费框
+	if ($post->fields->hide == 'pay' && !joe_detect_spider()) {
+		if ($post->fields->price > 0) {
+			$pay_box_position = $showContent ? joe_article_pay_purchased($post, $payment) : joe_article_pay_box($post); // 付费资源
+		} else {
+			$pay_box_position = joe_article_free_read($post, $comment); // 免费资源
+		}
+
+		// 根据设置在顶部或底部显示付费框
+		if (!$post->fields->pay_box_position || $post->fields->pay_box_position == 'top') $content = $pay_box_position . $content;
+		if ($post->fields->pay_box_position == 'bottom') $content = $content . $pay_box_position;
+	}
+
+	return $content;
+}

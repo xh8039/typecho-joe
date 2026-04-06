@@ -1,15 +1,3 @@
-/*
- * @Author        : Qinver
- * @Url           : zibll.com
- * @Date          : 2020-11-17 23:26:27
- * @LastEditTime: 2025-09-25 18:48:45
- * @Email         : 770349780@qq.com
- * @Project       : Zibll子比主题
- * @Description   : 一款极其优雅的Wordpress主题||编辑框的额外按钮
- * @Read me       : 感谢您使用子比主题，主题源码有详细的注释，支持二次开发。
- * @Remind        : 使用盗版主题会存在各种未知风险。支持正版，从我做起！
- */
-
 //内容追加到编辑框
 function grin(_this, val, fun) {
     var textarea = _this.parents('form').find('textarea.grin');
