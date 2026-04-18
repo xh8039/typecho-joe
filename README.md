@@ -3,7 +3,6 @@
 > 一款基于Typecho博客的双栏极致优化主题
 
 - 官方通知群：[782778569](https://qm.qq.com/q/9qlyquSaXe)
-- 易航博客：<http://blog.yihang.info/>
 - 主题宗旨：简洁、优美、超强、开源、精华
 
 ## 主题亮点
@@ -24,7 +23,7 @@
 
 ## 主题下载
 
-[下载Typecho主题 - Joe再续前缘](http://blog.yihang.info/archives/18.html)
+[下载Typecho主题 - Joe再续前缘](http://blog.yifun.cn/archives/18.html)
 
 ## 主题预览
 
@@ -32,8 +31,9 @@
 
 ## 更新内容
 
-### 2026-04-06 10:37:18 星期一
+### 2.10
 
+- 2026-04-06 10:37:18 星期一
 - 修复Typecho1.3官方BUG：保存的主题设置为空时自动回弹默认值
 - 修复用户注册功能
 - 修复未配置赞赏码时显示赞赏按钮
@@ -73,7 +73,7 @@
 
 ## 编辑器说明图
 
-![Joe再续前缘编辑器说明图](http://storage.yihang.info/media/202207252029421.jpg)
+![Joe再续前缘编辑器说明图](http://storage.yifun.cn/media/202207252029421.jpg)
 
 ## 主题目录介绍（非实时）
 
